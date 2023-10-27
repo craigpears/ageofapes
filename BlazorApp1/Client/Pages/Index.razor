@@ -1,0 +1,22 @@
+﻿@page "/"
+@using BlazorApp1.Shared
+@inject IJSRuntime JS
+@inject HttpClient Http
+
+@code {
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var lootingLocations = await Http.GetFromJsonAsync<List<LootingLocation>>("api/LootingLocations");
+        JS.InvokeVoidAsync("renderMap", lootingLocations);
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+}
+
+<PageTitle>Index</PageTitle>
+<img class="fullScreen" src="/images/AgeOfApesMap.png" style="width:100%;height: 100%;" />
+<canvas id="myCanvas" class="fullScreen" style="z-index:100;">
+    
+</canvas>
+
