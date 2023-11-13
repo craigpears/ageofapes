@@ -8,18 +8,21 @@ Console.WriteLine("Hello, World!");
 var sb = new StringBuilder();
 
 // TODO: Would be good to have a separate images folder that it scans and batches into groups of 50 for uploading
+// TODO: Would be good for this to use an API so the images can just be scanned and parsed in one flow
+// TODO: Would be good to be able to retain any images that failed text image recognition to retry them
 
-var resultsDirectory = @"C:\Users\craigrpears\Downloads\ScoutingScreenshots\Results";
-var errorsDirectory = @"C:\Users\craigrpears\Downloads\ScoutingScreenshots\Errors";
+var baseDirectory = @"\\nas-pears\documents\AgeOfApes\ScoutingScreenshots\FilesToProcess";
+var resultsDirectory = $"{baseDirectory}\\ToProcess";
+var errorsDirectory = $"{baseDirectory}\\Errors";
 var directories = Directory.GetDirectories(resultsDirectory);
 foreach (var directory in directories)
 {
     var files = Directory.GetFiles(directory);
     foreach (var file in files)
     {
-        // TODO: add a try catch and move any failures into a folder, move any successes into a success folder
         try
         {
+            // TODO: Add validation for files with no contents to make the errors less noisy
             var lines = File.ReadLines(file)
                 .ToList()
                 .Where(x => !string.IsNullOrEmpty(x))
@@ -76,9 +79,11 @@ foreach (var directory in directories)
 
 }
 
-// TODO: Put this into an output file
-// TODO: Would be nice to have a similar program that scans for names of known players in screenshots that have moved from their previous co-ordinates, or even use a crawler of some kind that does this automatically
 
+// TODO: Would be nice to have a similar program that scans for names of known players in screenshots that have moved from their previous co-ordinates, or even use a crawler of some kind that does this automatically
+// TODO: Move files from ToProcess to Processed folder
 
 var output = sb.ToString();
 Console.Write(output);
+
+File.WriteAllText($"{baseDirectory}\\{DateTime.Now.ToString("ddMMyyyy_mmss")}.csv", sb.ToString());
