@@ -7,7 +7,7 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var lootingLocations = await Http.GetFromJsonAsync<List<LootingLocation>>("api/LootingLocations");
+        var lootingLocations = await Http.GetFromJsonAsync<List<ScoutingEvent>>("api/LootingLocations");
         JS.InvokeVoidAsync("renderMap", lootingLocations);
         await base.OnAfterRenderAsync(firstRender);
     }

@@ -2,7 +2,7 @@
 
 namespace BlazorApp1.Shared;
 
-public class LootingLocation
+public class ScoutingEvent
 {
     public string PlayerName { get; set; }
     public string ClanName { get; set; }
@@ -30,22 +30,7 @@ public class LootingLocation
     // TODO: Turn these into enums for ranges for the more common ones to make data input easier
     public int IronAmount { get; set; }
     public int FoodAmount { get; set; }
-    public ResourceLevel? ResourceLevel { get; set; }
-    public int TotalResources
-    {
-        get
-        {
-            switch (ResourceLevel)
-            {
-                case ResourceLevel.None:
-                case ResourceLevel.Low:
-                case ResourceLevel.Medium:
-                    return (int)ResourceLevel;
-                default:
-                    return IronAmount + FoodAmount;
-            }
-        }
-    }
+    public int TotalResources => IronAmount + FoodAmount;
 
     public int ResourceToArmyRatio => TotalResources / (ArmyCount > 0 ? ArmyCount : 1);
 
@@ -65,12 +50,12 @@ public class LootingLocation
     // TODO: Make this more granular to build up a picture of how much power is needed to achive minimal losses, should be a list of attacks
     public int LossesOnLastAttack { get; set; }  
 
-    public LootingLocation()
+    public ScoutingEvent()
     {
         
     }
 
-    public LootingLocation(int x, int y, int food, int iron, int army, string clan, string name, DateTime lastScouted)
+    public ScoutingEvent(int x, int y, int food, int iron, int army, string clan, string name, DateTime lastScouted)
     {
         xCoordinates = x;
         yCoordinates = y;
@@ -82,18 +67,7 @@ public class LootingLocation
         DateLastScouted = lastScouted;
     }
     
-    public LootingLocation(int x, int y, ResourceLevel resourceLevel, int army, string clan, string name, DateTime lastScouted)
-    {
-        xCoordinates = x;
-        yCoordinates = y;
-        ResourceLevel = resourceLevel;
-        ArmyCount = army;
-        ClanName = clan;
-        PlayerName = name;
-        DateLastScouted = lastScouted;
-    }
-    
-    public LootingLocation(int x, int y, string playerName)
+    public ScoutingEvent(int x, int y, string playerName)
     {
         xCoordinates = x;
         yCoordinates = y;
