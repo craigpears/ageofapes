@@ -18,109 +18,109 @@ public class LootingLocationsController : ControllerBase
     [HttpGet]
     public IEnumerable<ScoutingEvent> Get()
     {
-        var lootingLocations = new List<ScoutingEvent>();
+        var scoutingEvents = new List<ScoutingEvent>();
 
         #region deadCities
         
-        lootingLocations.Add(new ScoutingEvent(6342, 4432, "raheem"));
-        lootingLocations.Add(new ScoutingEvent(6452, 4440, "ApeBZLWW69"));
-        lootingLocations.Add(new ScoutingEvent(6474, 4409, "CRYzeidCRY"));
-        lootingLocations.Add(new ScoutingEvent(6374, 4345, "[TOP]Ape3DNJM9P"));
-        lootingLocations.Add(new ScoutingEvent(6357, 4323, "Ape972W539"));
-        lootingLocations.Add(new ScoutingEvent(6378, 4301, "[UBVH]ApeZ9WJBXJ"));
-        lootingLocations.Add(new ScoutingEvent(6368, 4331, "Ape6WA7LP3"));
-        lootingLocations.Add(new ScoutingEvent(6312, 4266, "ThenooK"));
-        lootingLocations.Add(new ScoutingEvent(6252, 4304, "HUGOVG97"));
-        lootingLocations.Add(new ScoutingEvent(6270, 4246, "Ape4NYLM8W"));
-        lootingLocations.Add(new ScoutingEvent(6248, 4215, "BOOSIA"));
-        lootingLocations.Add(new ScoutingEvent(6299, 4127, "[NWO]DonkeyTropical"));
-        lootingLocations.Add(new ScoutingEvent(6269, 4143, "[NWO]ApePNLVMD3"));
-        lootingLocations.Add(new ScoutingEvent(6298, 4144, "[NWO]Lionh3artTM"));
-        lootingLocations.Add(new ScoutingEvent(6298, 4144, "[NWO]Lionh3artTM"));
-        lootingLocations.Add(new ScoutingEvent(6218, 4129, "[wolf]ApeG567J5J"));
-        lootingLocations.Add(new ScoutingEvent(6139, 4096, "ApeDNPMJ59"));
-        lootingLocations.Add(new ScoutingEvent(5950, 4077, "[QN3]Ape2L24572"));
-        lootingLocations.Add(new ScoutingEvent(5966, 4071, "Gregor"));
-        lootingLocations.Add(new ScoutingEvent(6001, 4056, "xakutara"));
-        lootingLocations.Add(new ScoutingEvent(6084, 4011, "Captin"));
-        lootingLocations.Add(new ScoutingEvent(6023, 4086, "Ape6WVPB32"));
-        lootingLocations.Add(new ScoutingEvent(6062, 4010, "ApeXNZ3VXZ"));
-        lootingLocations.Add(new ScoutingEvent(6048, 3995, "Ape5YJD7WG"));
-        lootingLocations.Add(new ScoutingEvent(6013, 3995, "ZX5KawasZX5ZX5"));
-        lootingLocations.Add(new ScoutingEvent(6082, 3968, "ApeX"));
-        lootingLocations.Add(new ScoutingEvent(6131, 3962, "[SVP]ApeX"));
-        lootingLocations.Add(new ScoutingEvent(6105, 3964, "ApeX"));
-        lootingLocations.Add(new ScoutingEvent(6135, 3949, "ApeX"));
-        lootingLocations.Add(new ScoutingEvent(6159, 3955, "darianyigarcia"));
-        lootingLocations.Add(new ScoutingEvent(6171, 3944, "ApeX"));
-        lootingLocations.Add(new ScoutingEvent(6246, 3905, "[fun]ApeX"));
-        lootingLocations.Add(new ScoutingEvent(6237, 3931, "[fun]ApeX"));
-        lootingLocations.Add(new ScoutingEvent(6231, 3910, "ApeX"));
-        lootingLocations.Add(new ScoutingEvent(6219, 3922, "[fun]TemA"));
-        lootingLocations.Add(new ScoutingEvent(6214 ,3906, "[fun]VankekX"));
-        lootingLocations.Add(new ScoutingEvent(6194, 3863, "[fun]ApeX"));
-        lootingLocations.Add(new ScoutingEvent(6200, 3890, "[fun]ApeX"));
-        lootingLocations.Add(new ScoutingEvent(6173, 3882, "Dadha"));
-        lootingLocations.Add(new ScoutingEvent(6194, 3863, "[fun]ApeX"));
-        lootingLocations.Add(new ScoutingEvent(6174, 3844, "[Osir]001BrunTOP"));
-        lootingLocations.Add(new ScoutingEvent(1632, 943, "ApeZ9NX3XA"));
-        lootingLocations.Add(new ScoutingEvent(1636, 870, "Amorphous"));
-        lootingLocations.Add(new ScoutingEvent(1632, 943, "ApeZ9NX3XA"));
-        lootingLocations.Add(new ScoutingEvent(1850, 740, "ApeL3GPXLY"));
+        scoutingEvents.Add(new ScoutingEvent(6342, 4432, "raheem"));
+        scoutingEvents.Add(new ScoutingEvent(6452, 4440, "ApeBZLWW69"));
+        scoutingEvents.Add(new ScoutingEvent(6474, 4409, "CRYzeidCRY"));
+        scoutingEvents.Add(new ScoutingEvent(6374, 4345, "[TOP]Ape3DNJM9P"));
+        scoutingEvents.Add(new ScoutingEvent(6357, 4323, "Ape972W539"));
+        scoutingEvents.Add(new ScoutingEvent(6378, 4301, "[UBVH]ApeZ9WJBXJ"));
+        scoutingEvents.Add(new ScoutingEvent(6368, 4331, "Ape6WA7LP3"));
+        scoutingEvents.Add(new ScoutingEvent(6312, 4266, "ThenooK"));
+        scoutingEvents.Add(new ScoutingEvent(6252, 4304, "HUGOVG97"));
+        scoutingEvents.Add(new ScoutingEvent(6270, 4246, "Ape4NYLM8W"));
+        scoutingEvents.Add(new ScoutingEvent(6248, 4215, "BOOSIA"));
+        scoutingEvents.Add(new ScoutingEvent(6299, 4127, "[NWO]DonkeyTropical"));
+        scoutingEvents.Add(new ScoutingEvent(6269, 4143, "[NWO]ApePNLVMD3"));
+        scoutingEvents.Add(new ScoutingEvent(6298, 4144, "[NWO]Lionh3artTM"));
+        scoutingEvents.Add(new ScoutingEvent(6298, 4144, "[NWO]Lionh3artTM"));
+        scoutingEvents.Add(new ScoutingEvent(6218, 4129, "[wolf]ApeG567J5J"));
+        scoutingEvents.Add(new ScoutingEvent(6139, 4096, "ApeDNPMJ59"));
+        scoutingEvents.Add(new ScoutingEvent(5950, 4077, "[QN3]Ape2L24572"));
+        scoutingEvents.Add(new ScoutingEvent(5966, 4071, "Gregor"));
+        scoutingEvents.Add(new ScoutingEvent(6001, 4056, "xakutara"));
+        scoutingEvents.Add(new ScoutingEvent(6084, 4011, "Captin"));
+        scoutingEvents.Add(new ScoutingEvent(6023, 4086, "Ape6WVPB32"));
+        scoutingEvents.Add(new ScoutingEvent(6062, 4010, "ApeXNZ3VXZ"));
+        scoutingEvents.Add(new ScoutingEvent(6048, 3995, "Ape5YJD7WG"));
+        scoutingEvents.Add(new ScoutingEvent(6013, 3995, "ZX5KawasZX5ZX5"));
+        scoutingEvents.Add(new ScoutingEvent(6082, 3968, "ApeX"));
+        scoutingEvents.Add(new ScoutingEvent(6131, 3962, "[SVP]ApeX"));
+        scoutingEvents.Add(new ScoutingEvent(6105, 3964, "ApeX"));
+        scoutingEvents.Add(new ScoutingEvent(6135, 3949, "ApeX"));
+        scoutingEvents.Add(new ScoutingEvent(6159, 3955, "darianyigarcia"));
+        scoutingEvents.Add(new ScoutingEvent(6171, 3944, "ApeX"));
+        scoutingEvents.Add(new ScoutingEvent(6246, 3905, "[fun]ApeX"));
+        scoutingEvents.Add(new ScoutingEvent(6237, 3931, "[fun]ApeX"));
+        scoutingEvents.Add(new ScoutingEvent(6231, 3910, "ApeX"));
+        scoutingEvents.Add(new ScoutingEvent(6219, 3922, "[fun]TemA"));
+        scoutingEvents.Add(new ScoutingEvent(6214 ,3906, "[fun]VankekX"));
+        scoutingEvents.Add(new ScoutingEvent(6194, 3863, "[fun]ApeX"));
+        scoutingEvents.Add(new ScoutingEvent(6200, 3890, "[fun]ApeX"));
+        scoutingEvents.Add(new ScoutingEvent(6173, 3882, "Dadha"));
+        scoutingEvents.Add(new ScoutingEvent(6194, 3863, "[fun]ApeX"));
+        scoutingEvents.Add(new ScoutingEvent(6174, 3844, "[Osir]001BrunTOP"));
+        scoutingEvents.Add(new ScoutingEvent(1632, 943, "ApeZ9NX3XA"));
+        scoutingEvents.Add(new ScoutingEvent(1636, 870, "Amorphous"));
+        scoutingEvents.Add(new ScoutingEvent(1632, 943, "ApeZ9NX3XA"));
+        scoutingEvents.Add(new ScoutingEvent(1850, 740, "ApeL3GPXLY"));
 
         #endregion
         
         #region lowValue
         
-        lootingLocations.Add(new ScoutingEvent(7023,3183,1472611, 0,0,"UBVH","Symbols",new DateTime(2023, 10, 21)));
+        scoutingEvents.Add(new ScoutingEvent(7023,3183,1472611, 0,0,"UBVH","Symbols",new DateTime(2023, 10, 21)));
         
         #endregion
         
         #region highValue
         
-        lootingLocations.Add(new ScoutingEvent(6712,4487,32637749, 29758854,197793,"","bapee",new DateTime(2023, 10, 22)));
-        lootingLocations.Add(new ScoutingEvent(6693,4321,32368823, 23066690,50177,"SVP","BHR15",new DateTime(2023, 10, 22)));
-        lootingLocations.Add(new ScoutingEvent(6697,4277,14246767, 2295857,0,"505","AEW",new DateTime(2023, 10, 22)));
-        lootingLocations.Add(new ScoutingEvent(6786,4169,31731981, 41473713,198002,"BFME","Monkeyleotop",new DateTime(2023, 10, 22)));
-        lootingLocations.Add(new ScoutingEvent(6858,4087,13310466, 8117789,51922,"BHC","Ape8PJW42P",new DateTime(2023, 10, 22)));
-        lootingLocations.Add(new ScoutingEvent(6740,4288,31926308, 16893737,49124,"505","Ahell",new DateTime(2023, 10, 22)));
+        scoutingEvents.Add(new ScoutingEvent(6712,4487,32637749, 29758854,197793,"","bapee",new DateTime(2023, 10, 22)));
+        scoutingEvents.Add(new ScoutingEvent(6693,4321,32368823, 23066690,50177,"SVP","BHR15",new DateTime(2023, 10, 22)));
+        scoutingEvents.Add(new ScoutingEvent(6697,4277,14246767, 2295857,0,"505","AEW",new DateTime(2023, 10, 22)));
+        scoutingEvents.Add(new ScoutingEvent(6786,4169,31731981, 41473713,198002,"BFME","Monkeyleotop",new DateTime(2023, 10, 22)));
+        scoutingEvents.Add(new ScoutingEvent(6858,4087,13310466, 8117789,51922,"BHC","Ape8PJW42P",new DateTime(2023, 10, 22)));
+        scoutingEvents.Add(new ScoutingEvent(6740,4288,31926308, 16893737,49124,"505","Ahell",new DateTime(2023, 10, 22)));
         
         #endregion
         
         #region twuArea
         
-        lootingLocations.Add(new ScoutingEvent(2101,1079,7497677, 5556605,157139,"TWU","wow34rus",new DateTime(2023, 10, 22)));
-        lootingLocations.Add(new ScoutingEvent(2039,1121,27506674, 4332506,226682,"TWU","Bubuy378",new DateTime(2023, 10, 22)));
-        lootingLocations.Add(new ScoutingEvent(2091,1097,2975626, 2510185,134027,"TWU","NOCCE",new DateTime(2023, 10, 22)));
-        lootingLocations.Add(new ScoutingEvent(2106,1101,5128503, 4952398,115500,"TWU","OrangUtan",new DateTime(2023, 10, 22)));
-        lootingLocations.Add(new ScoutingEvent(2075,1084,761448, 0,220047,"TWU","Andryuxxxa",new DateTime(2023, 10, 22)));
-        lootingLocations.Add(new ScoutingEvent(2125,1095,6300210, 7742746,260491,"TWU","hpak123",new DateTime(2023, 10, 22)));
-        lootingLocations.Add(new ScoutingEvent(2153,1133,3674209, 2525650,212181,"TWU","XxXrohimXxX",new DateTime(2023, 10, 22)));
-        lootingLocations.Add(new ScoutingEvent(289026,1121,0, 0,289026,"TWU","Alan92",new DateTime(2023, 10, 22)));
-        lootingLocations.Add(new ScoutingEvent(2172,1108,567430, 1298949,337560,"TWU","Bobdem",new DateTime(2023, 10, 22)));
-        lootingLocations.Add(new ScoutingEvent(2185,1160,1267991, 1345019,186338,"TWU","kingjj",new DateTime(2023, 10, 22)));
-        lootingLocations.Add(new ScoutingEvent(2153,1088,0, 0,87130,"TWU","BigRed",new DateTime(2023, 10, 22)));
-        lootingLocations.Add(new ScoutingEvent(2211,1090,0, 0,184574,"TWU","9of11",new DateTime(2023, 10, 22)));
-        lootingLocations.Add(new ScoutingEvent(2302,1022,2036203, 6536545,137646,"TWU","Grind",new DateTime(2023, 10, 22)));
-        lootingLocations.Add(new ScoutingEvent(2178,1081,868711, 813152,225326,"TWU","Robdizzle562",new DateTime(2023, 10, 22)));
-        lootingLocations.Add(new ScoutingEvent(2190,1094,540637, 827118,48100,"TWU","Shiin",new DateTime(2023, 10, 22)));
-        lootingLocations.Add(new ScoutingEvent(2186,1117,51440347, 16856728,294798,"TWU","Haranbanjo",new DateTime(2023, 10, 22)));
+        scoutingEvents.Add(new ScoutingEvent(2101,1079,7497677, 5556605,157139,"TWU","wow34rus",new DateTime(2023, 10, 22)));
+        scoutingEvents.Add(new ScoutingEvent(2039,1121,27506674, 4332506,226682,"TWU","Bubuy378",new DateTime(2023, 10, 22)));
+        scoutingEvents.Add(new ScoutingEvent(2091,1097,2975626, 2510185,134027,"TWU","NOCCE",new DateTime(2023, 10, 22)));
+        scoutingEvents.Add(new ScoutingEvent(2106,1101,5128503, 4952398,115500,"TWU","OrangUtan",new DateTime(2023, 10, 22)));
+        scoutingEvents.Add(new ScoutingEvent(2075,1084,761448, 0,220047,"TWU","Andryuxxxa",new DateTime(2023, 10, 22)));
+        scoutingEvents.Add(new ScoutingEvent(2125,1095,6300210, 7742746,260491,"TWU","hpak123",new DateTime(2023, 10, 22)));
+        scoutingEvents.Add(new ScoutingEvent(2153,1133,3674209, 2525650,212181,"TWU","XxXrohimXxX",new DateTime(2023, 10, 22)));
+        scoutingEvents.Add(new ScoutingEvent(289026,1121,0, 0,289026,"TWU","Alan92",new DateTime(2023, 10, 22)));
+        scoutingEvents.Add(new ScoutingEvent(2172,1108,567430, 1298949,337560,"TWU","Bobdem",new DateTime(2023, 10, 22)));
+        scoutingEvents.Add(new ScoutingEvent(2185,1160,1267991, 1345019,186338,"TWU","kingjj",new DateTime(2023, 10, 22)));
+        scoutingEvents.Add(new ScoutingEvent(2153,1088,0, 0,87130,"TWU","BigRed",new DateTime(2023, 10, 22)));
+        scoutingEvents.Add(new ScoutingEvent(2211,1090,0, 0,184574,"TWU","9of11",new DateTime(2023, 10, 22)));
+        scoutingEvents.Add(new ScoutingEvent(2302,1022,2036203, 6536545,137646,"TWU","Grind",new DateTime(2023, 10, 22)));
+        scoutingEvents.Add(new ScoutingEvent(2178,1081,868711, 813152,225326,"TWU","Robdizzle562",new DateTime(2023, 10, 22)));
+        scoutingEvents.Add(new ScoutingEvent(2190,1094,540637, 827118,48100,"TWU","Shiin",new DateTime(2023, 10, 22)));
+        scoutingEvents.Add(new ScoutingEvent(2186,1117,51440347, 16856728,294798,"TWU","Haranbanjo",new DateTime(2023, 10, 22)));
         
 
         
-        lootingLocations.Add(new ScoutingEvent(1978,1182,5129997, 4505707,24184,"RUST","Zex",new DateTime(2023, 10, 22)));
-        lootingLocations.Add(new ScoutingEvent(2082,1198,7274235, 4367856,70790,"RUST","AlexL",new DateTime(2023, 10, 22)));
+        scoutingEvents.Add(new ScoutingEvent(1978,1182,5129997, 4505707,24184,"RUST","Zex",new DateTime(2023, 10, 22)));
+        scoutingEvents.Add(new ScoutingEvent(2082,1198,7274235, 4367856,70790,"RUST","AlexL",new DateTime(2023, 10, 22)));
 
-        lootingLocations.Add(new ScoutingEvent(2039,1043,"ApeX"));
-        lootingLocations.Add(new ScoutingEvent(1978,1218,"ApeX"));
-        lootingLocations.Add(new ScoutingEvent(2039,1043,"XxXTriniVibeXxX"));
-        lootingLocations.Add(new ScoutingEvent(2211,1331,"001TipokTOP"));
+        scoutingEvents.Add(new ScoutingEvent(2039,1043,"ApeX"));
+        scoutingEvents.Add(new ScoutingEvent(1978,1218,"ApeX"));
+        scoutingEvents.Add(new ScoutingEvent(2039,1043,"XxXTriniVibeXxX"));
+        scoutingEvents.Add(new ScoutingEvent(2211,1331,"001TipokTOP"));
 
-        lootingLocations.Add(new ScoutingEvent(2588 ,1105,282096, 167148,3983,"TWU","ApeG59AB93",new DateTime(2023, 10, 22)));
-        lootingLocations.Add(new ScoutingEvent(6852 ,4299,42529483, 44094417,36100,"RUST","Allawi1997",new DateTime(2023, 10, 22)));
-        lootingLocations.Add(new ScoutingEvent(6806 ,4336,126348, 160541,29821,"NWO","Iordkrathus",new DateTime(2023, 10, 22)));
-        lootingLocations.Add(new ScoutingEvent(6643 ,4531,7124677, 5402290,33555,"THE","VALLECO",new DateTime(2023, 10, 22)));
-        lootingLocations.Add(new ScoutingEvent(6700 ,4508,8560859, 8127505,758,"","GrEsHnlk",new DateTime(2023, 10, 22)));
+        scoutingEvents.Add(new ScoutingEvent(2588 ,1105,282096, 167148,3983,"TWU","ApeG59AB93",new DateTime(2023, 10, 22)));
+        scoutingEvents.Add(new ScoutingEvent(6852 ,4299,42529483, 44094417,36100,"RUST","Allawi1997",new DateTime(2023, 10, 22)));
+        scoutingEvents.Add(new ScoutingEvent(6806 ,4336,126348, 160541,29821,"NWO","Iordkrathus",new DateTime(2023, 10, 22)));
+        scoutingEvents.Add(new ScoutingEvent(6643 ,4531,7124677, 5402290,33555,"THE","VALLECO",new DateTime(2023, 10, 22)));
+        scoutingEvents.Add(new ScoutingEvent(6700 ,4508,8560859, 8127505,758,"","GrEsHnlk",new DateTime(2023, 10, 22)));
 
         
         #endregion
@@ -203,10 +203,10 @@ public class LootingLocationsController : ControllerBase
         foreach (var location in screenscrapeData.Split("\r\n"))
         {
             var parts = location.Split(",");
-            lootingLocations.Add(new ScoutingEvent(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2]), int.Parse(parts[3]), int.Parse(parts[4]), parts[5], parts[6], new DateTime(2023, 10, 22)));
+            scoutingEvents.Add(new ScoutingEvent(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2]), int.Parse(parts[3]), int.Parse(parts[4]), parts[5], parts[6], new DateTime(2023, 10, 22)));
         }
 
-        lootingLocations.Add(new ScoutingEvent(6827,4332,119682871,99236376,95027,"BFME","Elbatlan",new DateTime(2023, 10, 22)));
+        scoutingEvents.Add(new ScoutingEvent(6827,4332,119682871,99236376,95027,"BFME","Elbatlan",new DateTime(2023, 10, 22)));
 
 
         #endregion
@@ -313,7 +313,7 @@ public class LootingLocationsController : ControllerBase
         {
             var parts = location.Split(",");
             // TODO: need to remember to change the date below each time
-            lootingLocations.Add(new ScoutingEvent(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2]), int.Parse(parts[3]), int.Parse(parts[4]), parts[5], parts[6], new DateTime(2023, 10, 23)));
+            scoutingEvents.Add(new ScoutingEvent(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2]), int.Parse(parts[3]), int.Parse(parts[4]), parts[5], parts[6], new DateTime(2023, 10, 23)));
         }
         
         #endregion
@@ -506,7 +506,7 @@ public class LootingLocationsController : ControllerBase
         {
             var parts = location.Split(",");
             // TODO: need to remember to change the date below each time
-            lootingLocations.Add(new ScoutingEvent(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2]), int.Parse(parts[3]), int.Parse(parts[4]), parts[5], parts[6], new DateTime(2023, 11, 3)));
+            scoutingEvents.Add(new ScoutingEvent(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2]), int.Parse(parts[3]), int.Parse(parts[4]), parts[5], parts[6], new DateTime(2023, 11, 3)));
         }
         
         #endregion
@@ -609,13 +609,13 @@ public class LootingLocationsController : ControllerBase
         {
             var parts = location.Split(",");
             // TODO: need to remember to change the date below each time
-            lootingLocations.Add(new ScoutingEvent(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2]), int.Parse(parts[3]), int.Parse(parts[4]), parts[5], parts[6], new DateTime(2023, 11, 13)));
+            scoutingEvents.Add(new ScoutingEvent(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2]), int.Parse(parts[3]), int.Parse(parts[4]), parts[5], parts[6], new DateTime(2023, 11, 13)));
         }
 
         #endregion
         
         #region other
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 1668,
             yCoordinates = 849,
@@ -629,7 +629,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 7023,
             yCoordinates = 3183,
@@ -643,7 +643,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 5656,
             yCoordinates = 1740,
@@ -657,7 +657,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 1668,
             yCoordinates = 849,
@@ -671,7 +671,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 7027,
             yCoordinates = 3248,
@@ -685,7 +685,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 1797,
             yCoordinates = 927,
@@ -699,7 +699,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 1813,
             yCoordinates = 924,
@@ -713,7 +713,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 6881,
             yCoordinates = 3103,
@@ -727,7 +727,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 4324,
             yCoordinates = 6244,
@@ -741,7 +741,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 1352,
             yCoordinates = 1802,
@@ -755,7 +755,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 6016,
             yCoordinates = 3644,
@@ -769,7 +769,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 676,
             yCoordinates = 3249,
@@ -783,7 +783,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 661,
             yCoordinates = 3276,
@@ -797,7 +797,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 681,
             yCoordinates = 3199,
@@ -811,7 +811,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 707,
             yCoordinates = 3194,
@@ -825,7 +825,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 5835,
             yCoordinates = 6178,
@@ -839,7 +839,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 2567,
             yCoordinates = 6702,
@@ -853,7 +853,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 648,
             yCoordinates = 5651,
@@ -867,7 +867,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 428,
             yCoordinates = 2870,
@@ -881,7 +881,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 579,
             yCoordinates = 5738,
@@ -895,7 +895,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 1305,
             yCoordinates = 5707,
@@ -909,7 +909,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 2067,
             yCoordinates = 1993,
@@ -923,7 +923,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 2162,
             yCoordinates = 1121,
@@ -937,7 +937,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 2186,
             yCoordinates = 1117,
@@ -951,7 +951,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 2172,
             yCoordinates = 1108,
@@ -965,7 +965,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 1645,
             yCoordinates = 985,
@@ -979,7 +979,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 5741,
             yCoordinates = 1931,
@@ -993,7 +993,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 6401,
             yCoordinates = 4467,
@@ -1009,7 +1009,7 @@ public class LootingLocationsController : ControllerBase
             LossesOnLastAttack = 0
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 6361,
             yCoordinates = 4425,
@@ -1025,7 +1025,7 @@ public class LootingLocationsController : ControllerBase
             LossesOnLastAttack = 0
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 6444,
             yCoordinates = 4427,
@@ -1041,7 +1041,7 @@ public class LootingLocationsController : ControllerBase
             LossesOnLastAttack = 0
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 6433,
             yCoordinates = 4350,
@@ -1057,7 +1057,7 @@ public class LootingLocationsController : ControllerBase
             LossesOnLastAttack = 0
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 6407,
             yCoordinates = 4354,
@@ -1073,7 +1073,7 @@ public class LootingLocationsController : ControllerBase
             LossesOnLastAttack = 33
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 6387,
             yCoordinates = 4367,
@@ -1087,7 +1087,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 6394,
             yCoordinates = 4316,
@@ -1101,7 +1101,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 6311,
             yCoordinates = 4291,
@@ -1117,7 +1117,7 @@ public class LootingLocationsController : ControllerBase
             LossesOnLastAttack = 2500
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 6290,
             yCoordinates = 4311,
@@ -1133,7 +1133,7 @@ public class LootingLocationsController : ControllerBase
             LossesOnLastAttack = 5000
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 6271,
             yCoordinates = 4269,
@@ -1149,7 +1149,7 @@ public class LootingLocationsController : ControllerBase
             LossesOnLastAttack = 10
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 6308,
             yCoordinates = 4215,
@@ -1163,7 +1163,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 6299,
             yCoordinates = 4088,
@@ -1177,7 +1177,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 6280,
             yCoordinates = 4074,
@@ -1193,7 +1193,7 @@ public class LootingLocationsController : ControllerBase
             LossesOnLastAttack = 5
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 6337,
             yCoordinates = 4119,
@@ -1207,7 +1207,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 6286,
             yCoordinates = 4113,
@@ -1221,7 +1221,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 6242,
             yCoordinates = 4133,
@@ -1236,7 +1236,7 @@ public class LootingLocationsController : ControllerBase
             DateLastAttacked = new DateTime(2023, 10, 21),
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 6092,
             yCoordinates = 4084,
@@ -1252,7 +1252,7 @@ public class LootingLocationsController : ControllerBase
             LossesOnLastAttack = 180
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 6192,
             yCoordinates = 3916,
@@ -1266,7 +1266,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 6167,
             yCoordinates = 3914,
@@ -1281,7 +1281,7 @@ public class LootingLocationsController : ControllerBase
             DateLastAttacked = new DateTime(2023, 10, 21),
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 6154,
             yCoordinates = 3893,
@@ -1296,7 +1296,7 @@ public class LootingLocationsController : ControllerBase
             DateLastAttacked = new DateTime(2023, 10, 21),
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 6160,
             yCoordinates = 3859,
@@ -1310,7 +1310,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 6141,
             yCoordinates = 3827,
@@ -1324,7 +1324,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 6072,
             yCoordinates = 3873,
@@ -1340,7 +1340,7 @@ public class LootingLocationsController : ControllerBase
             LossesOnLastAttack = 40
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 5989,
             yCoordinates = 3760,
@@ -1354,7 +1354,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 6172,
             yCoordinates = 3697,
@@ -1368,7 +1368,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 6112,
             yCoordinates = 3644,
@@ -1382,7 +1382,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 6090,
             yCoordinates = 3645,
@@ -1396,7 +1396,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 6065,
             yCoordinates = 3519,
@@ -1410,7 +1410,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 6138,
             yCoordinates = 3497,
@@ -1424,7 +1424,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 6236,
             yCoordinates = 3525,
@@ -1438,7 +1438,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 6163,
             yCoordinates = 3562,
@@ -1452,7 +1452,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 6155,
             yCoordinates = 3544,
@@ -1466,7 +1466,7 @@ public class LootingLocationsController : ControllerBase
             DateLastScouted = new DateTime(2023, 10, 21)
         });
         
-        lootingLocations.Add(new ScoutingEvent
+        scoutingEvents.Add(new ScoutingEvent
         {
             xCoordinates = 6065,
             yCoordinates = 3519,
@@ -1482,7 +1482,7 @@ public class LootingLocationsController : ControllerBase
         
         #endregion
 
-        var weakPlayers = lootingLocations
+        var weakPlayers = scoutingEvents
             .Where(x => x.ArmyCount < 25000)
             .OrderByDescending(x => x.TotalResources)
             .ToList();
@@ -1497,10 +1497,17 @@ public class LootingLocationsController : ControllerBase
         
         // TODO: Add a feature so that it can group them by nearby teleport location, e.g. get me the best spot with the most resources within 1 minutes march
 
-        var orderedLocations = lootingLocations
+        var lootingLocations = scoutingEvents
+            .OrderBy(x => x.DateLastScouted)
+            .GroupBy(x => x.PlayerName)
+            .Select(x => new LootingLocation { ScoutingEvents = x.ToList() })
+            .ToList();
+        
+        var orderedEvents = lootingLocations
+            .Select(x => x.ScoutingEvents.MaxBy(x => x.DateLastScouted))
             .OrderBy(x => x.FoodAmount + x.IronAmount)
             .ToList();
 
-        return orderedLocations;
+        return orderedEvents;
     }
 }
