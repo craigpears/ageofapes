@@ -2,10 +2,10 @@
 
 public enum Difficulty
 {
-    Undefended,
-    MinimalLosses,
-    MediumLosses,
-    HighLosses,
-    HeavyLosses,
-    CrazyLosses
+    Undefended = 1,
+    MinimalLosses = 2,
+    MediumLosses = 3,
+    HighLosses = 5,
+    HeavyLosses = 10,
+    CrazyLosses = 20
 }

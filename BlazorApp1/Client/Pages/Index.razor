@@ -1,15 +1,43 @@
 ﻿@page "/"
+@page "/map/{spotX:int}/{spotY:int}/{spotRadius:int}"
 @using BlazorApp1.Shared
 @inject IJSRuntime JS
 @inject HttpClient Http
 
 @code {
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    public LootingMap _lootingMap = new LootingMap();
+    private int ironAmount = 0;
+    private int foodAmount = 0;
+
+    [Parameter] 
+    public int? spotX { get; set; }
+    [Parameter]
+    public int? spotY { get; set; }
+
+    [Parameter]
+    public int? spotRadius { get; set; }
+    
+    protected override async Task OnParametersSetAsync()
     {
-        var lootingLocations = await Http.GetFromJsonAsync<List<ScoutingEvent>>("api/LootingLocations");
-        JS.InvokeVoidAsync("renderMap", lootingLocations);
-        await base.OnAfterRenderAsync(firstRender);
+        var query = "";
+        if (spotX != null)
+            query = $"spotX={spotX}&spotY={spotY}&spotRadius={spotRadius}";
+        _lootingMap = await Http.GetFromJsonAsync<LootingMap>($"api/LootingLocations?{query}");
+        JS.InvokeVoidAsync("renderMap", _lootingMap.LootingLocations);
+        await base.OnInitializedAsync();
+    }
+
+    private async Task ClearLocation(ScoutingEvent location)
+    {
+        location.DateLastScouted = DateTime.Now;
+        location.IronAmount = ironAmount;
+        location.FoodAmount = foodAmount;
+        await Http.PostAsJsonAsync("api/ScoutingUpdate", location);
+        _lootingMap.ScoutingLocations.Remove(location);
+        ironAmount = 0;
+        foodAmount = 0;
+        StateHasChanged();
     }
 
 }
@@ -20,3 +48,32 @@
     
 </canvas>
 
+<div class="infoContainer">
+    <h3>Scouting Targets (@_lootingMap.ScoutingLocations.Sum(x => x.TotalResources).ToMillionsText())</h3>
+    <input class="form-control" @bind-value="foodAmount"></input>
+    <input class="form-control" @bind-value="ironAmount"></input>
+    @foreach (var group in _lootingMap.ScoutingLocations.GroupBy(x => x.grid))
+    {
+        <h4>@group.Key</h4>
+        <ul>
+            @foreach (var location in group.ToList().OrderBy(x => x.GlobalRank))
+            {
+                <li>@(location.FullName)(@location.DaysSinceScouted) - @location.xCoordinates, @location.yCoordinates (@location.TotalResources.ToMillionsText()/@location.Difficulty.ToString())
+                    <button type="button" class="btn btn-primary" onclick="@(async () => await ClearLocation(location))">Clear</button>
+                </li>
+            }
+        </ul>
+    }
+    <h3>Region Stats</h3>
+    <div class="regionStatsContainer">
+        @foreach (var regionStat in _lootingMap.RegionStats)
+        {
+            <div class="regionStat">@regionStat.Name - @regionStat.TotalResources.ToMillionsText() (@regionStat.Count)</div>
+        }
+    </div>
+    <div class="bestSpotContainer">
+        <a href="/map/@_lootingMap.BestSpotX/@_lootingMap.BestSpotY/500">
+            Best spot is at @_lootingMap.BestSpotX,@_lootingMap.BestSpotY (@_lootingMap.BestSpotTotalResources.ToMillionsText())
+        </a>
+    </div>
+</div>

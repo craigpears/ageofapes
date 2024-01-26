@@ -1,0 +1,10 @@
+﻿
+
+TROOP INFO
+[BFME]Rick
+X:6667 Y:4121
+Power: 2,046,512
+Plunderable Resources
+9,000
+9,000
+3,516

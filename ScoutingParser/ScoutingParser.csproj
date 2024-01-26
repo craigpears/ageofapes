@@ -7,4 +7,20 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Syncfusion.PDF.OCR.Net.Core" Version="23.2.4" />
+      <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
+      <PackageReference Include="Tesseract" Version="5.2.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\BlazorApp1\Shared\BlazorApp1.Shared.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="tessdata\eng.traineddata">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

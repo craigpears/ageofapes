@@ -13,56 +13,58 @@
     var canvasHeight = gridHeight + imageMarginBottom + imageMarginTop;
     
     canvas.width = canvasWidth;
-    canvas.height = canvasHeight;
-    
-    console.log("rendering locations");
-    console.log(window.screen);
-    console.log(canvas);
-    console.log(canvas.height);
-    console.log(canvas.width);
-    
+    canvas.height = canvasHeight;    
 
     lootingLocations.forEach(function(lootingLocation) {
-
+        //console.log("rendering looting location");
+        //console.log(lootingLocation);
         var canvasCoordinates = toCanvasCoordinates(lootingLocation.xCoordinates, lootingLocation.yCoordinates, canvasHeight, imageMarginLeft, imageMarginBottom);
         var xPos = canvasCoordinates.x;
         var yPos = canvasCoordinates.y;
-        console.log("rendering location at " + xPos + ", " + yPos);
-        console.log(lootingLocation);
         
-        var totalResources = lootingLocation.ironAmount + lootingLocation.foodAmount;
+        var totalResources = lootingLocation.totalResources;
         var resourcesPerPixel = 250000;
         var cityRadius = totalResources / resourcesPerPixel;
-        var minimumRadius = 20;
+        var minimumRadius = 12;
         var minimumResources = 500000;
         var highResources = 5000000;
-        var mediumResources = 250000;
-        var lowDefence = 5000;
+        var mediumResources = 1000000;
+
+        ctx.globalAlpha = 1.0 - lootingLocation.decay;
         
         // TODO: Move this logic into the back end and return them as enums so it can be exported, should only be rendering here
-        if(totalResources < minimumResources || lootingLocation.recovering)
+        if(totalResources < minimumResources)
         {
-            ctx.fillStyle = "black";
             cityRadius = minimumRadius;
-        }
-        else if(lootingLocation.armyCount < lowDefence && totalResources < highResources)
-        {
-            ctx.fillStyle = "white";
-            cityRadius += minimumRadius;
+            
+            if(lootingLocation.maxResources > mediumResources)
+            {
+                ctx.fillStyle = "white";
+            }
+            else
+            {
+                ctx.fillStyle = "black";          
+            }
         }
         else if(totalResources > highResources)
         {
             ctx.fillStyle = "red";
             cityRadius = totalResources / highResources;
-            cityRadius *= 2;
             cityRadius += minimumRadius * 1.5;
         }
         else if(totalResources > mediumResources)
         {
             ctx.fillStyle = "orange";
-            cityRadius += minimumRadius * 0.75;
+            cityRadius = minimumRadius * 1.35;
         }
-                
+        else
+        {
+            ctx.fillStyle = "yellow";
+            cityRadius = minimumRadius * 1.15;
+        }
+
+
+        var resourcesMillionsText = Math.floor(totalResources / 1000000);
         
         ctx.beginPath();
         ctx.arc(xPos, yPos, cityRadius, 0, 2 * Math.PI);
@@ -70,16 +72,19 @@
         ctx.fill();
         ctx.stroke();
 
-        ctx.font = "80px Arial";
+
+        ctx.font = "30px Arial";
         ctx.fillStyle = "white";
+
+        if(lootingLocation.regionRank < 15)
+        {
+            ctx.globalAlpha = 1.0;
+            var logText = resourcesMillionsText + "M," + lootingLocation.playerName + "[" + lootingLocation.daysSinceScouted + "]" + "("+lootingLocation.xCoordinates + "," + lootingLocation.yCoordinates+")";
+            ctx.fillText(logText,xPos - 20, yPos + 20);
+        }
+
         //ctx.fillText(lootingLocation.playerName + ": " + lootingLocation.xCoordinates +", " + lootingLocation.yCoordinates, xPos, yPos);
         
-        var resourcesMillions = Math.floor(totalResources / 1000000);
-        if(resourcesMillions >= 15)
-        {
-            //ctx.fillText(lootingLocation.xCoordinates + ", " + lootingLocation.yCoordinates, xPos, yPos);
-            ctx.fillText(resourcesMillions + "M", xPos - 40, yPos + 20);
-        }
     });
     
     console.log("drawing debugging margins");
@@ -93,6 +98,7 @@
     var drawWholeGrid = false;
     var drawDebugCoordinates = false;
     if(debug) {
+        
         // Draw outer margin lines
         /*
         ctx.beginPath();
@@ -134,6 +140,7 @@
         */
         
         // Draw another set to see how the canvas co-ordinates change with the y position
+        /*
         for(var i = 0; i <= gridWidth; i += 450)
         {
             var verticalStart = toCanvasCoordinates(i, 0, canvasHeight, imageMarginLeft, imageMarginBottom);
@@ -151,6 +158,8 @@
             ctx.lineTo(horizontalEnd.x, horizontalEnd.y);
             ctx.stroke();
         }
+        
+         */
         
         if(drawDebugCoordinates)
         {
@@ -213,8 +222,9 @@
         {
             console.log("drawing debugging grid");
 
-            for (var gridxPos = 100; gridxPos < gridWidth; gridxPos += 600)
-                for (var gridyPos = 100; gridyPos < gridHeight; gridyPos += 600) {
+            for (var gridxPos = 0; gridxPos < gridWidth; gridxPos += 4000)
+                for (var gridyPos = 0; gridyPos < gridHeight; gridyPos += 2500) {
+
                     var canvasPos = toCanvasCoordinates(gridxPos, gridyPos, canvasHeight, imageMarginLeft, imageMarginBottom);
                     ctx.beginPath();
                     ctx.fillText(gridxPos + ", " + gridyPos, canvasPos.x, canvasPos.y);
@@ -251,24 +261,6 @@ function toCanvasCoordinates(gridxPos, gridyPos, canvasHeight, imageMarginLeft, 
     var canvasY = gridBottomLeftCanvasY - (yMultiplier * gridyPos);
     //console.log(gridBottomLeftCanvasY + " - " + gridyPos + " * " + yMultiplier + " => " + canvasY);
     return { "x": canvasX, "y": canvasY };
-}
-
-function multiplyMatrix(a, b) {
-    // https://math.stackexchange.com/questions/1914806/converting-map-coordinates-of-a-rotated-grid
-    // https://stackoverflow.com/questions/27205018/multiply-2-matrices-in-javascript
-    var aNumRows = a.length, aNumCols = a[0].length,
-        bNumRows = b.length, bNumCols = b[0].length,
-        m = new Array(aNumRows);  // initialize array of rows
-    for (var r = 0; r < aNumRows; ++r) {
-        m[r] = new Array(bNumCols); // initialize the current row
-        for (var c = 0; c < bNumCols; ++c) {
-            m[r][c] = 0;             // initialize the current cell
-            for (var i = 0; i < aNumCols; ++i) {
-                m[r][c] += a[r][i] * b[i][c];
-            }
-        }
-    }
-    return m;
 }
 
 function markCrossHairs(ctx, x, y)

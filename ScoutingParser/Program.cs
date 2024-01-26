@@ -1,20 +1,89 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
+using System.IO.Compression;
 using System.Text;
 using System.Text.RegularExpressions;
+using ScoutingParser;
+using Syncfusion.Drawing;
+using Tesseract;
 
-Console.WriteLine("Hello, World!");
+var baseDirectory = @"\\nas-pears\documents\AgeOfApes\ScoutingScreenshots\";
+var filesDirectory = $"{baseDirectory}\\FilesToProcess";
+var resultsDirectory = $"{filesDirectory}\\ToProcess";
+var errorsDirectory = $"{filesDirectory}\\Errors";
+var imagesToProcessDirectory = $"{baseDirectory}\\ImagesToProcess";
+
 
 var sb = new StringBuilder();
 
-// TODO: Would be good to have a separate images folder that it scans and batches into groups of 50 for uploading
-// TODO: Would be good for this to use an API so the images can just be scanned and parsed in one flow
-// TODO: Would be good to be able to retain any images that failed text image recognition to retry them
+Console.WriteLine("Organising images to process into batches");
+var batcher = new ImageBatcher();
+batcher.BatchImages(imagesToProcessDirectory);
 
-var baseDirectory = @"\\nas-pears\documents\AgeOfApes\ScoutingScreenshots\FilesToProcess";
-var resultsDirectory = $"{baseDirectory}\\ToProcess";
-var errorsDirectory = $"{baseDirectory}\\Errors";
+Console.WriteLine("Parsing images");
+using var engine = new TesseractEngine(@"./tessdata",
+    "eng", EngineMode.Default,
+    Array.Empty<string>(), 
+    new Dictionary<string, object>()
+    {
+        { "tessedit_char_whitelist", "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789[]:, "}
+    }, 
+    false);
+
+var tesseractTextParser = new TesseractScoutingTextParser();
+var imagesDirectory = new DirectoryInfo(imagesToProcessDirectory);
+var imagesToProcess = imagesDirectory.GetFiles().Where(f => !f.Attributes.HasFlag(FileAttributes.Hidden));
+var imagesErrorFolderPath = $"{imagesToProcessDirectory}\\Errors";
+var textOutputFolder = $"{imagesToProcessDirectory}\\TextOutput";
+foreach (var image in imagesToProcess)
+{
+    
+    try
+    {
+
+        #region tesseract
+
+        /*
+        using var img = Pix.LoadFromFile(image.FullName);
+        using var page = engine.Process(img);
+        var text = page.GetText();
+        
+        File.WriteAllText($"{textOutputFolder}\\{image.Name}.txt", text);
+        Console.WriteLine(text.Replace("\n", ""));
+        var lines = text.Split("\n").ToList();
+        var scoutingEvent = tesseractTextParser.ParseScoutingText(lines);
+        sb.Append($"{scoutingEvent.xCoordinates},{scoutingEvent.yCoordinates},{scoutingEvent.FoodAmount},{scoutingEvent.IronAmount},{scoutingEvent.ArmyCount},{scoutingEvent.ClanName},{scoutingEvent.PlayerName}\r\n");
+        */
+
+        #endregion
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine(ex.Message); 
+        image.MoveTo($"{imagesErrorFolderPath}\\{image.Name}");
+    }
+    
+
+}
+
+// TODO: Pick up files from the download folder matching the right name pattern.  Also unzip and copy them.
+Console.WriteLine("Checking for downloaded files");
+var downloadsDirectory = new DirectoryInfo(@"C:\users\craig\Downloads");
+var downloadedFiles = downloadsDirectory
+    .GetFiles()
+    .Where(x => x.Name.Contains("file") && x.Name.Contains("zip"))
+    .ToList();
+
+foreach (var downloadZip in downloadedFiles)
+{
+    Console.WriteLine($"Extracting {downloadZip.FullName}");
+    ZipFile.ExtractToDirectory(downloadZip.FullName, $"{filesDirectory}\\ToProcess\\{downloadZip.Name}");
+    File.Delete(downloadZip.FullName);
+}
+
 var directories = Directory.GetDirectories(resultsDirectory);
+
+Console.WriteLine("Checking for text files to process");
 foreach (var directory in directories)
 {
     var files = Directory.GetFiles(directory);
@@ -22,53 +91,11 @@ foreach (var directory in directories)
     {
         try
         {
-            // TODO: Add validation for files with no contents to make the errors less noisy
-            var lines = File.ReadLines(file)
-                .ToList()
-                .Where(x => !string.IsNullOrEmpty(x))
-                .Where(x => !x.Contains("TROOP"))
-                .Where(x => !x.Contains("Plundered"));
+            var textLines = File.ReadLines(file).ToList();
+            var parser = new WebScoutingTextParser();
+            var scoutingEvent = parser.ParseScoutingText(textLines);
+            sb.Append(scoutingEvent.ToOutputLine());
 
-            var numberLines = lines
-                .Where(x => int.TryParse(x.Replace(",",""), out var result))
-                .Select(x => int.Parse(x.Replace(",","")))
-                .ToList();
-            
-            var stringLines = lines.Where(x => !int.TryParse(x, out var result)).ToList();
-            
-            var powerLine = stringLines.Single(x => x.Contains("Power"));
-            var coordinatesLine = stringLines.Single(x => x.Contains("X:"));
-            var nameLine = stringLines.First();
-            if (nameLine.Contains("X:"))
-            {
-                nameLine = nameLine.Substring(0, nameLine.IndexOf("X:"));
-            }
-            
-            var name = nameLine;
-            var coordinates = coordinatesLine.Substring(coordinatesLine.IndexOf("X:"));
-            var power = powerLine;
-            var food = numberLines[0];
-            var iron = numberLines[1];
-            var troops = numberLines[2];
-            var clan = "";
-
-            var nameRegex = new Regex("\\[(.+)\\](.+)");
-            var match = nameRegex.Match(name);
-            if (match.Success)
-            {
-                clan = match.Groups[1].Value;
-                name = match.Groups[2].Value;
-            }
-
-            coordinates = coordinates.Replace("X:", "");
-            coordinates = coordinates.Replace("Y:", "");
-            var parts = coordinates.Split(" ");
-
-            var x = parts[0];
-            var y = parts[1];
-
-            sb.Append($"{x},{y},{food},{iron},{troops},{clan},{name}\r\n");
-        
         }
         catch (Exception e)
         {
@@ -86,4 +113,12 @@ foreach (var directory in directories)
 var output = sb.ToString();
 Console.Write(output);
 
-File.WriteAllText($"{baseDirectory}\\{DateTime.Now.ToString("ddMMyyyy_mmss")}.csv", sb.ToString());
+if (!string.IsNullOrEmpty(output))
+{
+    File.WriteAllText($"{filesDirectory}\\output\\{DateTime.Now.ToString("ddMMyyyy_mmss")}.csv", sb.ToString());
+}
+
+foreach (var directory in directories)
+{
+    System.IO.Directory.Delete(directory, true);
+}

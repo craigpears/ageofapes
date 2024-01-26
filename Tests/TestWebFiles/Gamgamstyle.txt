@@ -1,0 +1,8 @@
+﻿
+
+TROOP INFO
+gamgamstyle
+X:4261 Y:895
+Power: 155,680
+Plunderable Resources
+80

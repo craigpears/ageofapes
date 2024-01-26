@@ -70,3 +70,26 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+    
+ .infoContainer {
+     position: fixed;
+     top: 0;
+     left: 0;
+     color: white;
+     background-color: navy;
+     z-index:9999;
+     height:100%;
+     overflow-y: scroll;
+ }   
+ 
+ .regionStatsContainer {
+     display: flex;
+     width: 500px;
+     flex-wrap: wrap;
+ }
+ 
+ .regionStat {
+     display: inline-block;
+     padding: 5px;
+     white-space: nowrap;
+ }
