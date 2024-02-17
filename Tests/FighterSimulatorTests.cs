@@ -1,3 +1,6 @@
+using System.Diagnostics;
+using System.Text;
+using System.Xml.Schema;
 using BlazorApp1.Shared.FighterSimulator;
 using Newtonsoft.Json;
 using ScoutingParser;
@@ -32,21 +35,36 @@ public class FighterSimulatorTests
         foreach (var fighter in fighters)
         {
             var configurations = statsService.GetConfigurationsForFighter(fighter, fightOptions);
+            var i = 0;
             foreach (var configuration in configurations)
             {
+                if (i++ % 10000 == 0)
+                {
+                    Debug.WriteLine($"Simulating attack {i}/{configurations.Count()}");
+                }
+                
                 var army = new Army
                 {
                     ArmyBoosts = configuration.ArmyBoosts, 
                     FighterConfiguration = configuration,
                     Troops = new List<Troop>
                     {
-                        new() { Count = 100000, TroopType = TroopType.WallBreaker, GearLevel = 5, TroopLevel = 5 }
+                        new() { Count = (int)(100000 * configuration.ArmyBoosts.MaxTroopsMultiplier), TroopType = TroopType.WallBreaker, GearLevel = 5, TroopLevel = 5 }
                     }
                 };
                 
+                
                 var defendingArmy = new Army
                 {
-                    ArmyBoosts = new ArmyBoosts(),
+                    ArmyBoosts = new ArmyBoosts
+                    {
+                         UnitBoosts = new List<UnitBoosts>
+                         {
+                             new UnitBoosts { AttackBoostPercent = 1040, DefenceBoostPercent = 640, TroopType = TroopType.Pilot },
+                             new UnitBoosts { AttackBoostPercent = 1040, DefenceBoostPercent = 640, TroopType = TroopType.Hitter },
+                             new UnitBoosts { AttackBoostPercent = 1040, DefenceBoostPercent = 640, TroopType = TroopType.Shooter }
+                         }
+                    },
                     Troops = new List<Troop>
                     {
                         new() { TroopType = TroopType.Hitter, Count = 250000, GearLevel = 5, TroopLevel = 5 },
@@ -61,17 +79,60 @@ public class FighterSimulatorTests
             
         }
 
+        var bestResults = results
+            .OrderByDescending(x => x.AttackLogs.First().AttackerDamage)
+            .GroupBy(x => x.AttackingArmy.FighterConfiguration.TalentBreakdown)// Only take the best of each breakdown, there are usually lots of variants with stats that don't matter
+            .Select(x => x.ToList().First())
+            .ToList();
 
-        var resultsCsv = results.Select(x =>
-            $"{x.AttackingArmy.FighterConfiguration.TalentPointCount}\t{x.AttackLogs.Max(a => a.AttackerDamage)}\t{x.AttackLogs.First().DefenderLostTroops}");
+        // TODO: Improve this so that army boosts are separated out into columns
+        var headers = "Fighter\tRoundsTaken\tMaxDamage\tMaxSkillDamage\tFirstDefenderTroopLoss\tTalentBreakdown\t";
+        var boostTypes = bestResults
+            .SelectMany(x => x.AttackingArmy.FighterConfiguration.SelectedTalents)
+            .SelectMany(x => x.Boosts)
+            .Select(x => x.BoostType)
+            .Distinct();
+
+        foreach (var boostType in boostTypes)
+        {
+            headers += $"{boostType.ToString()}\t";
+        }
         
-        /*
-           \t{JsonConvert.SerializeObject(x.AttackingArmy.FighterConfiguration, Formatting.Indented, new JsonSerializerSettings
-            {
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-            })}
-         */
-        var resultsFile = string.Join("\r\n", resultsCsv);
+        var sb = new StringBuilder();
 
-     }
+        sb.AppendLine(headers);
+        
+        foreach (var result in bestResults)
+        {
+            sb.Append($"{result.AttackingArmy.FighterConfiguration.Fighter.Name}\t");
+            sb.Append($"{result.AttackLogs.Count}\t");
+            sb.Append($"{result.AttackLogs.Max(a => a.AttackerDamage)}\t");
+            sb.Append($"{result.AttackLogs.Max(a => a.AttackerSkillDamage)}\t");
+            sb.Append($"{result.AttackLogs.First().DefenderLostTroops}\t");
+            sb.Append($"{result.AttackingArmy.FighterConfiguration.TalentBreakdown}\t");
+            
+            var resultBoosts = result
+                .AttackingArmy
+                .FighterConfiguration
+                .SelectedTalents
+                .SelectMany(x => x.Boosts)
+                .GroupBy(x => x.BoostType);
+            
+            foreach (var boostType in boostTypes)
+            {
+                var matchingBoost = resultBoosts.SingleOrDefault(x => x.Key == boostType);
+                if (matchingBoost != null)
+                {
+                    sb.Append($"{matchingBoost.ToList().Sum(b => b.BoostAmounts.Max())}");
+                }
+
+                sb.Append("\t");
+            }
+
+            sb.Append("\r\n");
+        }
+
+        var resultsCsv = sb.ToString();
+
+    }
 }

@@ -4,6 +4,7 @@ namespace BlazorApp1.Shared.FighterSimulator;
 
 public class Talent
 {
+    public static int NextTalentId = 0;
     public Talent()
     {
         
@@ -27,37 +28,31 @@ public class Talent
         };
         RootTalent = this;
     }
-    
-    public List<Boost> Boosts { get; set; }
+
+    public List<Boost> Boosts { get; set; } = new List<Boost>();
     public List<Talent> NextTalents { get; set; } = new List<Talent>();
     public bool Optional { get; set; } = false;
+
+    public int TalentDepth { get; set; } = 0;
     
-    public int TalentDepth { get; set; }
-    
-    [JsonIgnore]
     public Talent RootTalent { get; set; }
     
-    public Talent WithOptionalTalent(BoostType boostType, List<Double> boostAmounts)
-    {
-        WithOptionalTalent(boostType, boostAmounts, null, null);
-        return this;
-    }
+    public string TalentTreeName { get; set; }
+    public int TalentId = NextTalentId++;
+
+    public Talent LastRequiredTalent { get; set; }
+    public int TalentPointCost => Boosts.Any() ? Boosts.FirstOrDefault().BoostAmounts.Count() : 0;
     
     public Talent WithOptionalTalent(BoostType boostType, List<Double> boostAmounts, TroopType? troopRestriction = null, BoostRestrictionType? boostRestrictionType = null)
     {
         var optionalTalent = WithNextTalent(boostType, boostAmounts, troopRestriction, boostRestrictionType);
         optionalTalent.Optional = true;
-        return this;
-    }
-    
-    public Talent WithNextTalent(BoostType boostType, List<Double> boostAmounts)
-    {
-        var nextTalent = new Talent(boostType, boostAmounts);
-        // Set a few properties for debugging help
-        nextTalent.TalentDepth = TalentDepth + 1; 
-        nextTalent.RootTalent = RootTalent;
-        NextTalents.Add(nextTalent);
-        return nextTalent;
+        // Set the parent talent so when traversing it can easily get back to the main path
+        optionalTalent.LastRequiredTalent = LastRequiredTalent;
+        // Move the talent so that it links to this one
+        LastRequiredTalent.NextTalents.Remove(optionalTalent);
+        NextTalents.Add(optionalTalent);
+        return optionalTalent;
     }
     
     public Talent WithNextTalent(BoostType boostType, List<Double> boostAmounts, TroopType? troopRestriction = null, BoostRestrictionType? boostRestrictionType = null)
@@ -66,7 +61,8 @@ public class Talent
         // Set a few properties for debugging help
         nextTalent.TalentDepth = TalentDepth + 1;
         nextTalent.RootTalent = RootTalent;
-        NextTalents.Add(nextTalent);
+        nextTalent.LastRequiredTalent = nextTalent;
+        (LastRequiredTalent ?? this).NextTalents.Add(nextTalent);
         return nextTalent;
     }
 

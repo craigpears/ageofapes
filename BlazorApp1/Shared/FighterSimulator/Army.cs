@@ -5,6 +5,8 @@ public class Army
     public ArmyBoosts ArmyBoosts { get; set; }
     public List<Troop> Troops { get; set; }
     public FighterConfiguration FighterConfiguration { get; set; }
+    public int RageLevel { get; set; }
+
 }
 
 public class Troop
@@ -13,9 +15,9 @@ public class Troop
     public void CalculateStats(ArmyBoosts armyBoosts)
     {
         var boosts = armyBoosts.UnitBoosts.SingleOrDefault(x => x.TroopType == TroopType);
-        CalculatedAttack = Attack * (boosts?.Attack ?? 1);
-        CalculatedDefence = Defence * (boosts?.Defence ?? 1);
-        CalculatedHealth = Health * (boosts?.Health ?? 1);
+        CalculatedAttack = Attack * ((boosts?.AttackBoostPercent ?? 1) / 100);
+        CalculatedDefence = Defence * ((boosts?.DefenceBoostPercent ?? 1) / 100);
+        CalculatedHealth = Health * ((boosts?.HealthBoostPercent ?? 1) / 100);
     }
     
     public double CalculatedAttack { get; set; }

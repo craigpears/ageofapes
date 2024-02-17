@@ -9,6 +9,7 @@ public class FightersRepository
         var fighters = new List<Fighter>();
 
         fighters.Add(Derrick.GetFighter());
+        fighters.Add(Laurent.GetFighter());
 
         return fighters;
     }

@@ -8,4 +8,8 @@ public class Boost
     public TroopType? TroopRestriction { get; set; }
     public int? BoostChancePercent { get; set; }
     public int? BoostDurationSeconds { get; set; }
+    public double MaxBoostAmount => BoostAmounts.Max();
+    public bool DisabledInCannonMode { get; set; }
+    public int Chance { get; set; }
+    public int DurationSeconds { get; set; }
 }

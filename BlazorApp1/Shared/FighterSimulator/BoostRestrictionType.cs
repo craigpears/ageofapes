@@ -9,5 +9,9 @@ public enum BoostRestrictionType
     TwoSecondsAfterActiveSkillRelease,
     HealthAbove90,
     FirstFiveSecondsOfBattle,
-    FiveSecondsAfterActiveSkillRelease
+    FiveSecondsAfterActiveSkillRelease,
+    GatheringResources,
+    ThreeSecondsAfterHitByActiveSkill,
+    TenSecondsAfterLeavingCity,
+    ThreeSecondsAfterHealing
 }

@@ -20,5 +20,12 @@ public enum BoostType
     TakesLessCounterAttackDamage,
     IncreasedRageOnReceiveNormalAttack,
     ReducedDamageFromNormalAttacks,
-    EnemySkillDamageReduced
+    EnemySkillDamageReduced,
+    RestoreRageAfterActiveSkill,
+    TroopsTakeLessSkillDamage,
+    IncreasedRageOnNormalAttack,
+    ConvertSeriouslyWoundedToLightlyWounded,
+    IncreasedRageOnReceiveSkillAttack,
+    IncreasedGatheringSpeed,
+    IncreasedLoad
 }

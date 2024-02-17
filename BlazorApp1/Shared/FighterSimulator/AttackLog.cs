@@ -10,4 +10,5 @@ public class AttackLog
     public double DefenderTotalHealth { get; set; }
     public int DefenderLostTroops { get; set; }
     public int AttackerLostTroops { get; set; }
+    public double AttackerSkillDamage { get; set; }
 }
