@@ -12,4 +12,5 @@ public class Boost
     public bool DisabledInCannonMode { get; set; }
     public int Chance { get; set; }
     public int DurationSeconds { get; set; }
+    public string Source { get; set; }
 }

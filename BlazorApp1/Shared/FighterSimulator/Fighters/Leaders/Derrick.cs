@@ -85,10 +85,14 @@ public class Derrick
             Boosts = new List<Boost>
             {
                 new Boost { 
-                    BoostType = BoostType.IncreasedAttack,
-                    TroopRestriction = TroopType.WallBreaker, // TODO: This should be all wall breakers only
-                    BoostAmounts = new List<double> { 40 },
-                    DisabledInCannonMode = false
+                    BoostType = BoostType.IncreasedHealth,
+                    TroopRestriction = TroopType.WallBreaker,
+                    BoostAmounts = new List<double> { 20 }
+                },  
+                new Boost { 
+                    BoostType = BoostType.IncreasedCounterAttackDamage,
+                    BoostAmounts = new List<double> { 10 },
+                    BoostRestrictionType = BoostRestrictionType.HealthAbove70
                 },
             }
         };
@@ -102,13 +106,13 @@ public class Derrick
                 {
                     BoostType = BoostType.IncreasedAttack,
                     TroopRestriction = TroopType.WallBreaker,
-                    BoostAmounts = new List<double> { 10, 15, 20, 25, 30 }
+                    BoostAmounts = new List<double> { 30 }
                 },
                 new Boost
                 {
                     BoostType = BoostType.IncreasedMarchingSpeed,
                     TroopRestriction = TroopType.WallBreaker,
-                    BoostAmounts = new List<double> { 10, 15, 20, 25, 30 }
+                    BoostAmounts = new List<double> { 30 }
                 }
             },
             TalentTree = Leader.GetTree()                                                               
@@ -125,13 +129,13 @@ public class Derrick
                 {
                     BoostType = BoostType.ReducedDeadUnits,
                     BoostRestrictionType = BoostRestrictionType.AttackingCitiesOnly,
-                    BoostAmounts = new List<double> { 3, 4, 6, 8, 10 }
+                    BoostAmounts = new List<double> { 10 }
                 },
                 new Boost
                 {
                     BoostType = BoostType.IncreasedDamage,
                     BoostRestrictionType = BoostRestrictionType.AttackingCitiesOnly,
-                    BoostAmounts = new List<double> { 3, 4, 6, 8, 10 }
+                    BoostAmounts = new List<double> { 10 }
                 }
             },
             TalentTree = Conqueror.GetTree()
@@ -147,18 +151,18 @@ public class Derrick
                 new Boost
                 {
                     BoostType = BoostType.IncreasedSkillDamage,
-                    BoostAmounts = new List<double> { -10, -10, -10, -10, -10 }
+                    BoostAmounts = new List<double> { -10 }
                 },
                 new Boost
                 {
                     BoostType = BoostType.IncreasedDamage,
-                    BoostAmounts = new List<double> { 6, 9, 12, 16, 20 }
+                    BoostAmounts = new List<double> { 20 }
                 },
                 new Boost
                 {
                     BoostType = BoostType.IncreasedDamage,
                     BoostRestrictionType = BoostRestrictionType.SeigeMode,
-                    BoostAmounts = new List<double> { 3, 4, 6, 8, 10 }
+                    BoostAmounts = new List<double> { 10 }
                 }
             },
             TalentTree = Attacker.GetTree()

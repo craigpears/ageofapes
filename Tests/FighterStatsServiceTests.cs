@@ -17,9 +17,9 @@ public class FighterStatsServiceTests : TalentClass
     [Test]
     public void GetTreeCombinations_ShouldCombineBothSidesOfATalentTree()
     {
-        var talentTree = new Talent(BoostType.IncreasedAttack, HalfStepUnits);
-        talentTree.WithNextTalent(BoostType.IncreasedMaxTroops, HalfStepUnits);
-        talentTree.WithNextTalent(BoostType.IncreasedDamage, HalfStepUnits);
+        var talentTree = new Talent(BoostType.IncreasedAttack, HalfPercentSteps);
+        talentTree.NextTalent(BoostType.IncreasedMaxTroops, HalfPercentSteps);
+        talentTree.NextTalent(BoostType.IncreasedDamage, HalfPercentSteps);
 
         var sut = new FighterStatsService();
         var combinations = sut.GetTreeCombinations(talentTree);
@@ -40,14 +40,14 @@ public class FighterStatsServiceTests : TalentClass
     [Test]
     public void GetTreeCombinations_ShouldTraverseRequiredTalents()
     {
-        var talentTree = new Talent(BoostType.IncreasedAttack, HalfStepUnits);
+        var talentTree = new Talent(BoostType.IncreasedAttack, HalfPercentSteps);
             
         // Left half of tree
-        talentTree.WithNextTalent(BoostType.IncreasedMaxTroops, HalfStepUnits)
-            .WithNextTalent(BoostType.EnemySkillDamageReduced, SingleStepUnits);
+        talentTree.NextTalent(BoostType.IncreasedMaxTroops, HalfPercentSteps)
+            .NextTalent(BoostType.EnemySkillDamageReduced, SinglePercentSteps);
             
         // Right half of tree    
-        talentTree.WithNextTalent(BoostType.IncreasedDamage, HalfStepUnits);
+        talentTree.NextTalent(BoostType.IncreasedDamage, HalfPercentSteps);
 
         var sut = new FighterStatsService();
         var combinations = sut.GetTreeCombinations(talentTree);
@@ -64,16 +64,16 @@ public class FighterStatsServiceTests : TalentClass
     [Test]
     public void GetTreeCombinations_ShouldTraverseMultipleOptionalTalents()
     {
-        var talentTree = new Talent(BoostType.IncreasedAttack, HalfStepUnits);
+        var talentTree = new Talent(BoostType.IncreasedAttack, HalfPercentSteps);
             
         // Left half of tree
-        talentTree.WithNextTalent(BoostType.IncreasedMaxTroops, HalfStepUnits)
-            .WithNextTalent(BoostType.EnemySkillDamageReduced, SingleStepUnits)
-            .WithOptionalTalent(BoostType.IncreasedHealing, SingleStepUnits)
-            .WithOptionalTalent(BoostType.IncreasedDamageToCounteredUnit, SingleStepUnits);
+        talentTree.NextTalent(BoostType.IncreasedMaxTroops, HalfPercentSteps)
+            .NextTalent(BoostType.EnemySkillDamageReduced, SinglePercentSteps)
+            .OptionalTalent(BoostType.IncreasedHealing, SinglePercentSteps)
+            .OptionalTalent(BoostType.IncreasedDamageToCounteredUnit, SinglePercentSteps);
             
         // Right half of tree    
-        talentTree.WithNextTalent(BoostType.IncreasedDamage, HalfStepUnits);
+        talentTree.NextTalent(BoostType.IncreasedDamage, HalfPercentSteps);
 
         var sut = new FighterStatsService();
         var combinations = sut.GetTreeCombinations(talentTree);
@@ -96,15 +96,15 @@ public class FighterStatsServiceTests : TalentClass
     [Test]
     public void GetTreeCombinations_ShouldCombineBothSidesOfALargerTalentTree()
     {
-        var talentTree = new Talent(BoostType.IncreasedAttack, HalfStepUnits);
+        var talentTree = new Talent(BoostType.IncreasedAttack, HalfPercentSteps);
         
         talentTree
-            .WithNextTalent(BoostType.IncreasedMaxTroops, HalfStepUnits)
-            .WithNextTalent(BoostType.IncreasedMarchingSpeed, ThreePercentSteps);
+            .NextTalent(BoostType.IncreasedMaxTroops, HalfPercentSteps)
+            .NextTalent(BoostType.IncreasedMarchingSpeed, ThreePercentSteps);
         
         talentTree
-            .WithNextTalent(BoostType.IncreasedDamage, HalfStepUnits)
-            .WithNextTalent(BoostType.IncreasedMarchingSpeed, ThreePercentSteps);
+            .NextTalent(BoostType.IncreasedDamage, HalfPercentSteps)
+            .NextTalent(BoostType.IncreasedMarchingSpeed, ThreePercentSteps);
 
         var sut = new FighterStatsService();
         var combinations = sut.GetTreeCombinations(talentTree);

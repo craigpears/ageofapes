@@ -1,9 +1,15 @@
 ﻿using System.Diagnostics;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using BlazorApp1.Shared.FighterSimulator.Boosts;
 
 namespace BlazorApp1.Shared.FighterSimulator;
 
 public class FighterStatsService
 {
+    protected static Dictionary<string, List<List<Talent>>> _talentTreeCombinationsCache = new Dictionary<string, List<List<Talent>>>();
+    protected string _cacheFilesDirectory = @"\\nas-pears\documents\AgeOfApes\FighterOutputs\Cache";
+    
     public List<FighterConfiguration> GetConfigurationsForFighter(Fighter fighter, FightSimulationOptions fightOptions)
     {
         // TODO: Can expand this idea to what's the best combination of research, relics, equipment etc. if they're all standardised into one kind of cost unit
@@ -12,10 +18,15 @@ public class FighterStatsService
         var allTalentCombinations = GetAllPossibleCombinations(fighter, new List<int> { 100 });
         var allConfigurations = new List<FighterConfiguration>();
         
-        Debug.WriteLine($"Calculating army boosts");
+        var i = 0;
 
         foreach (var combination in allTalentCombinations)
         {
+            if (i % 25000 == 0)
+            {
+                Debug.WriteLine($"Calculating army boosts - {i}/{allTalentCombinations.Count}");
+            }
+            
             var config = new FighterConfiguration
             {
                 Fighter = fighter,
@@ -24,6 +35,7 @@ public class FighterStatsService
             };
             
             allConfigurations.Add(config);
+            i++;
         }
 
         return allConfigurations;
@@ -31,32 +43,69 @@ public class FighterStatsService
 
     public List<List<Talent>> GetAllPossibleCombinations(Fighter fighter, List<int> desiredTalentTotals)
     {
-        var combinations = fighter
+        // TODO: Cache these results somehow, they take quite a long time
+        var rootTalents = fighter
             .TalentSkills
-            .Select(x => new List<Talent> { x.TalentTree })
+            .Select(x => x.TalentTree)
             .ToList();
 
-        var nextCombinations = new List<List<Talent>>();
+        var combinations = new List<List<Talent>>();
 
-        foreach (var combination in combinations)
+        foreach (var rootTalent in rootTalents)
         {
-            nextCombinations.AddRange(GetTreeCombinations(combination));
+            Debug.WriteLine($"Getting tree combinations for {rootTalent.TalentTreeName}");
+            var treeCombinations = GetTreeCombinationsCached(rootTalent);
+            combinations.AddRange(treeCombinations);
+            Debug.WriteLine($"{treeCombinations.Count()} tree combinations added");
         }
-        
-        combinations.AddRange(nextCombinations);
 
+        Debug.WriteLine($"Getting permutations of all trees");
         var allPermutations = GetAllPermutations(combinations, desiredTalentTotals);
         Debug.WriteLine($"{allPermutations.Count()} permutations found");
 
         return allPermutations;
     }
 
+    public List<List<Talent>> GetTreeCombinationsCached(Talent rootTalent)
+    {
+        var cacheFileName = $"{_cacheFilesDirectory}/{rootTalent.TalentTreeName}.json";
+        if (_talentTreeCombinationsCache.ContainsKey(rootTalent.TalentTreeName))
+        {
+            Debug.WriteLine($"Returning cached tree combinations for {rootTalent.TalentTreeName}");
+            return _talentTreeCombinationsCache[rootTalent.TalentTreeName];
+        }
+        
+        if (File.Exists(cacheFileName))
+        {
+            Debug.WriteLine($"Loading from disk cached tree combinations for {rootTalent.TalentTreeName}");
+            var cachedJson = File.ReadAllText(cacheFileName);
+            var cachedCombinations = JsonSerializer.Deserialize<List<List<Talent>>>(cachedJson);
+            _talentTreeCombinationsCache[rootTalent.TalentTreeName] = cachedCombinations;
+            return cachedCombinations;
+        }
+        
+        Debug.WriteLine($"No cached tree combinations for {rootTalent.TalentTreeName}, building...");
+        var combinations = GetTreeCombinations(rootTalent);
+        _talentTreeCombinationsCache[rootTalent.TalentTreeName] = combinations;
+        
+        // Remove these large links before serialising
+        combinations.ForEach(x => x.ForEach(t =>
+        {
+            t.RootTalent = null;
+            t.NextTalents = null;
+            t.LastRequiredTalent = null;
+        }));
+        
+        var json = JsonSerializer.Serialize(combinations, new JsonSerializerOptions { ReferenceHandler = ReferenceHandler.IgnoreCycles});
+        File.WriteAllText(cacheFileName, json);
+        return combinations;
+    }
+    
     public List<List<Talent>> GetTreeCombinations(Talent rootTalent) =>
         GetTreeCombinations(new List<Talent> { rootTalent });
     
     protected List<List<Talent>> GetTreeCombinations(List<Talent> talents)
     {
-        Debug.WriteLine($"Getting next combinations for {talents.Count()} talents");
         var lastTalent = talents.Last();
 
         var nextCombinations = new List<List<Talent>>();
@@ -73,7 +122,6 @@ public class FighterStatsService
         
         if (nextRequiredTalent != null)
         {
-            Debug.WriteLine("Adding required talent");
             var copiedList = CopyTalentsList(talents);
             copiedList.Add(nextRequiredTalent);
             var combinationsWithoutOptionalTalent = GetTreeCombinations(copiedList);
@@ -85,7 +133,6 @@ public class FighterStatsService
         var optionalTalent = lastTalent.NextTalents.FirstOrDefault(x => x.Optional);
         if (optionalTalent != null)
         {
-            Debug.WriteLine("Adding optional talent");
             var copiedList = CopyTalentsList(talents);
             copiedList.Add(optionalTalent);
             var combinationsWithOptionalTalent = GetTreeCombinations(copiedList);
@@ -98,7 +145,6 @@ public class FighterStatsService
         var otherSideOfTree = lastTalent.RootTalent.NextTalents.LastOrDefault(x => !talents.Contains(x));
         if (otherSideOfTree != null)
         {
-            Debug.WriteLine("Traversing second side of tree");
             var copiedList = CopyTalentsList(talents);
             copiedList.Add(otherSideOfTree);
             var combinationsWithOtherTreeHalf = GetTreeCombinations(copiedList);
@@ -108,7 +154,6 @@ public class FighterStatsService
         // Order them by depth so it's easier to filter out duplicates later
         var orderedTalents = talents.OrderBy(x => x.TalentId).ToList();
         nextCombinations.Add(orderedTalents);
-        Debug.WriteLine("Finished traversing tree");
 
         // Some combinations can be captured twice by forward + reverse traversals, so filter them out
         var distinctCombinations = new List<List<Talent>>();
@@ -127,26 +172,21 @@ public class FighterStatsService
     private List<List<Talent>> GetAllPermutations(List<List<Talent>> talentLists, List<int> desiredSizes)
     {
         var allPermutations = new List<List<Talent>>();
-        var distinctTalentTreeCount = talentLists.Select(x => x.First().RootTalent.TalentTreeName).Distinct().Count();
+        var distinctTalentTreeCount = talentLists.Select(x => x.First().TalentTreeName).Distinct().Count();
         
         // Try to minimise wasted work by only looking for permutations that use all talent points
         var talentListDictionary = talentLists.GroupBy(x => x.Sum(t => t.TalentPointCost)).ToList();
-        var i = 0;
-
+        
         foreach (var list in talentListDictionary)
         {
             var size = list.Key;
             var values = list.ToList();
             
-            Debug.WriteLine($"Getting all permutations with {values.Count()} lists of size {size} ({++i}/{talentListDictionary.Count()})");
-
             foreach (var value in values)
             {
-                var talentTreeName = value.First().RootTalent.TalentTreeName;
+                var talentTreeName = value.First().TalentTreeName;
                 
-                
-                    
-                foreach (var desiredSize in desiredSizes.Where(x => x >= size))
+                foreach (var desiredSize in desiredSizes)
                 {
                     // TODO: This needs to support combining multiple trees
                     var sizeToMatchWith = desiredSize - size;
@@ -164,7 +204,7 @@ public class FighterStatsService
 
                     var matchingLists = matchingGroup
                         .ToList()
-                        .Where(x => x.First().RootTalent.TalentTreeName != talentTreeName || distinctTalentTreeCount == 1)
+                        .Where(x => x.First().TalentTreeName != talentTreeName || distinctTalentTreeCount == 1)
                         // Don't combine overlapping lists
                         .Where(x => x.Except(value).Any())
                         .ToList();
@@ -193,70 +233,125 @@ public class FighterStatsService
 
     public ArmyBoosts BuildArmyBoosts(Fighter fighter, List<Talent> selectedTalents, FightSimulationOptions fightOptions)
     {
-        // TODO: need to make sure all the boost restrictions are implemented properly
-        // TODO: variable ones like above x health should be modelled like active skills 
+        selectedTalents
+            .SelectMany(x => x.Boosts)
+            .ToList()
+            .ForEach(x => x.Source = "Talent");
+
         foreach (var fighterSkill in fighter.FighterSkills.Where(x => x.FighterSkillType == FigherSkillType.Passive))
         {
             var applicableBoosts = fighterSkill
-                .Boosts
-                .Where(x => x.BoostRestrictionType != BoostRestrictionType.SeigeMode || fightOptions.Seige)
-                .Where(x => !x.DisabledInCannonMode || !fightOptions.UseCannons)
-                .ToList();
+                .Boosts.Where(x => IsApplicableBoost(x, fightOptions)).ToList();
+            
+            applicableBoosts.ForEach(x => x.Source = "FighterSkill");
+            
+            var talent = new Talent
+            {
+                Boosts = applicableBoosts
+            };
+                
+            selectedTalents.Add(talent);
         }
         
         foreach (var talentSkill in fighter.TalentSkills)
         {
             var pointsInSelection = selectedTalents
-                .Where(x => x.RootTalent == talentSkill.TalentTree)
+                .Where(x => x.TalentTreeName == talentSkill.TalentTree.TalentTreeName)
                 .Sum(x => x.TalentPointCost);
 
             if (pointsInSelection >= 50)
             {
+                talentSkill.Boosts.ForEach(x => x.Source = "TalentSkill");
                 var talent = new Talent
                 {
-                    Boosts = talentSkill.Boosts,
-                    RootTalent = talentSkill.TalentTree
+                    Boosts = talentSkill.Boosts
                 };
                 
                 selectedTalents.Add(talent);
             }
         }
+
+        // TODO: Improve this so it only chooses the best display buffs based on the army rather than all display values
+        var relicsRepository = new RelicBoostsRepository();
+        var researchBoostsRepository = new ResearchBoostsRepository();
         
-        // TODO: Need to filter out based on context like seige/map battle etc
+        var otherBoosts = new List<Boost>();
+        otherBoosts.AddRange(relicsRepository.GetBoosts());
+        otherBoosts.AddRange(researchBoostsRepository.GetBoosts());
+        
+        selectedTalents.Add(new Talent
+        {
+            Boosts = otherBoosts
+        });
+
         // TODO: Implement increased rage talents/boosts
         var boosts = new ArmyBoosts
         {
             UnitBoosts = new List<UnitBoosts>
             {
-                GetUnitBoosts(selectedTalents, TroopType.Hitter), 
-                GetUnitBoosts(selectedTalents, TroopType.Pilot),
-                GetUnitBoosts(selectedTalents, TroopType.Shooter),
-                GetUnitBoosts(selectedTalents, TroopType.WallBreaker)
+                GetUnitBoosts(selectedTalents, TroopType.Hitter, fightOptions), 
+                GetUnitBoosts(selectedTalents, TroopType.Pilot, fightOptions),
+                GetUnitBoosts(selectedTalents, TroopType.Shooter, fightOptions),
+                GetUnitBoosts(selectedTalents, TroopType.WallBreaker, fightOptions)
             },
-            DamageDealtByNormalAttacks = GetStatBoosts(selectedTalents, x => x.BoostType == BoostType.IncreasedNormalAttackDamage),
-            DamageDealtBySkillsPercentIncrease = GetStatBoosts(selectedTalents, x => x.BoostType == BoostType.IncreasedSkillDamage),
-            DamageDealtByCounterAttacks = GetStatBoosts(selectedTalents, x => x.BoostType == BoostType.IncreasedCounterAttackDamage),
+            DamageDealtByNormalAttacks = GetStatBoosts(selectedTalents, fightOptions, x => x.BoostType == BoostType.IncreasedNormalAttackDamage || x.BoostType == BoostType.IncreasedDamage),
+            DamageDealtBySkillsPercentIncrease = GetStatBoosts(selectedTalents, fightOptions, x => x.BoostType == BoostType.IncreasedSkillDamage || x.BoostType == BoostType.IncreasedDamage),
+            DamageDealtByCounterAttacks = GetStatBoosts(selectedTalents, fightOptions, x => x.BoostType == BoostType.IncreasedCounterAttackDamage || x.BoostType == BoostType.IncreasedDamage),
             IncreasedMaxTroopsPercent = selectedTalents.SelectMany(x => x.Boosts.Where(x => x.BoostType == BoostType.IncreasedMaxTroops)).Sum(x => x.MaxBoostAmount),
+            ApplicableBoosts = selectedTalents.SelectMany(x => x.Boosts).Where(x => IsApplicableBoost(x, fightOptions)).ToList()
         };
-        
-        // TODO: Add in talent and fighter skills in a simplified way somehow
 
         return boosts;
     }
-    
-    
-    
 
-    public double GetStatBoosts(List<Talent> talents, Func<Boost, bool> filter)
+    private bool IsApplicableBoost(Boost boost, FightSimulationOptions fightOptions)
+    {
+        var applicable = boost.BoostRestrictionType switch
+        {
+            BoostRestrictionType.SeigeMode => fightOptions.Seige,
+            BoostRestrictionType.GatheringResources => fightOptions.Gathering,
+            BoostRestrictionType.AttackingCitiesOnly => fightOptions.Seige,
+            BoostRestrictionType.MapBattle => fightOptions.MapBattle,
+            BoostRestrictionType.LeadingRally => false, // TODO: This should be a fight option
+            BoostRestrictionType.HealthBelowHalf => false, // TODO: need to improve this later
+            BoostRestrictionType.TwoSecondsAfterActiveSkillRelease => false,
+            BoostRestrictionType.HealthAbove70 => true, // TODO: Needs improving later
+            BoostRestrictionType.HealthAbove90 => true, // TODO: need to improve this later
+            BoostRestrictionType.HealthAbove80 => true, // TODO: need to improve this later
+            BoostRestrictionType.HealthBelow80 => false, // TODO: need to improve this later
+            BoostRestrictionType.FirstFiveSecondsOfBattle => false,
+            BoostRestrictionType.FiveSecondsAfterActiveSkillRelease => false,
+            BoostRestrictionType.ThreeSecondsAfterHitByActiveSkill => false,
+            BoostRestrictionType.TenSecondsAfterLeavingCity => false,
+            BoostRestrictionType.ThreeSecondsAfterHealing => false,
+            BoostRestrictionType.ThreeSecondsAfterSuccessfulChance => false,
+            BoostRestrictionType.AttackingGatherers => fightOptions.Gathering,
+            BoostRestrictionType.Garrison => fightOptions.Garrison,
+            BoostRestrictionType.DefendingAgainstMultipleTroops => false, // TODO: This needs implementing
+            BoostRestrictionType.AttackingNeutralUnits => fightOptions.AttackingNeutralUnits,
+            BoostRestrictionType.MultipliedByAdjacentAllies => true, // TODO: This needs implementing
+            null => true,
+            _ => throw new NotImplementedException()
+        };
+
+        if (boost.DisabledInCannonMode)
+            applicable = false;
+        
+        return applicable;
+    }
+
+
+    public double GetStatBoosts(List<Talent> talents, FightSimulationOptions fightSimulationOptions, Func<Boost, bool> filter)
     {
         return talents
             .SelectMany(x => x.Boosts)
+            .Where(x => IsApplicableBoost(x, fightSimulationOptions))
             .Where(filter)
             .Select(x => x.BoostAmounts.Max())
             .Sum();
     }
 
-    public UnitBoosts GetUnitBoosts(List<Talent> talents, TroopType troopType)
+    public UnitBoosts GetUnitBoosts(List<Talent> talents, TroopType troopType, FightSimulationOptions fightSimulationOptions)
     {
         var filteredTalents = talents
             .Where(x => x.Boosts.Any(b => b.TroopRestriction == troopType || b.TroopRestriction == null))
@@ -264,11 +359,11 @@ public class FighterStatsService
         
         return new UnitBoosts
         {
-            AttackBoostPercent = GetStatBoosts(filteredTalents, x => x.BoostType == BoostType.IncreasedAttack),
-            DefenceBoostPercent = GetStatBoosts(filteredTalents, x => x.BoostType == BoostType.IncreasedDefence),
-            HealthBoostPercent = GetStatBoosts(filteredTalents, x => x.BoostType == BoostType.IncreasedHealth),
-            Damage = GetStatBoosts(filteredTalents, x => x.BoostType == BoostType.IncreasedDamage),
-            Counter = GetStatBoosts(filteredTalents, x => x.BoostType == BoostType.IncreasedDamageToCounteredUnit),
+            AttackBoostPercent = GetStatBoosts(filteredTalents, fightSimulationOptions, x => x.BoostType == BoostType.IncreasedAttack),
+            DefenceBoostPercent = GetStatBoosts(filteredTalents, fightSimulationOptions, x => x.BoostType == BoostType.IncreasedDefence),
+            HealthBoostPercent = GetStatBoosts(filteredTalents, fightSimulationOptions, x => x.BoostType == BoostType.IncreasedHealth),
+            Damage = GetStatBoosts(filteredTalents, fightSimulationOptions, x => x.BoostType == BoostType.IncreasedDamage),
+            Counter = GetStatBoosts(filteredTalents, fightSimulationOptions, x => x.BoostType == BoostType.IncreasedDamageToCounteredUnit),
             TroopType = troopType
         };
     }

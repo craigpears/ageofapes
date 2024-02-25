@@ -2,7 +2,7 @@
 
 namespace BlazorApp1.Shared.FighterSimulator.Fighters;
 
-public class Laurent
+public class Remy
 {
     
     public static Fighter GetFighter()
@@ -10,46 +10,69 @@ public class Laurent
         var devotedProtector = new FighterSkill {
             FighterSkillType = FigherSkillType.Active,
             RageRequired = 1000,
-            HealingFactor = 1100
+            Boosts = new List<Boost>
+            {
+                // TODO: This should be able to boost two allied troops as well
+                new Boost { 
+                    BoostType = BoostType.IncreasedHealth,
+                    BoostRestrictionType = BoostRestrictionType.ThreeSecondsAfterHitByActiveSkill,
+                    BoostAmounts = new List<double> { 20 }
+                },
+                new Boost { 
+                    BoostType = BoostType.IncreasedDefence,
+                    BoostRestrictionType = BoostRestrictionType.ThreeSecondsAfterHitByActiveSkill,
+                    BoostAmounts = new List<double> { 20 }
+                },
+                new Boost { 
+                    BoostType = BoostType.IncreasedAttack,
+                    BoostRestrictionType = BoostRestrictionType.ThreeSecondsAfterHitByActiveSkill,
+                    BoostAmounts = new List<double> { 15 }
+                }
+            }
         };
         
-        var standingGuard = new FighterSkill {
+        var spicedUp = new FighterSkill {
             FighterSkillType = FigherSkillType.Passive,
             Boosts = new List<Boost>
             {
                 new Boost { 
                     BoostType = BoostType.IncreasedDefence,
-                    TroopRestriction = TroopType.WallBreaker,
+                    BoostAmounts = new List<double> { 5 }
+                },
+                new Boost { 
+                    BoostType = BoostType.IncreasedDefence,
                     BoostRestrictionType = BoostRestrictionType.GatheringResources,
-                    BoostAmounts = new List<double> { 30 }
+                    BoostAmounts = new List<double> { 5 }
                 },
                 new Boost { 
                     BoostType = BoostType.IncreasedHealth,
                     TroopRestriction = TroopType.WallBreaker,
                     BoostRestrictionType = BoostRestrictionType.GatheringResources,
-                    BoostAmounts = new List<double> { 30 }
+                    BoostAmounts = new List<double> { 10 },
+                    Chance = 10
                 }
             }
         };
         
-        var engineTuning = new TalentSkill
+        var criticalCargo = new TalentSkill
         {
-            Name = "Engine Tuning",
+            Name = "Critical Cargo",
             Boosts = new List<Boost>
             {
                 new Boost
                 {
-                    BoostType = BoostType.IncreasedAttack,
+                    BoostType = BoostType.IncreasedDefence,
                     TroopRestriction = TroopType.WallBreaker,
-                    BoostRestrictionType = BoostRestrictionType.TwoSecondsAfterActiveSkillRelease,
-                    BoostAmounts = new List<double> { 50 }
+                    BoostRestrictionType = BoostRestrictionType.ThreeSecondsAfterSuccessfulChance,
+                    BoostAmounts = new List<double> { 15 },
+                    Chance = 10
                 },
                 new Boost
                 {
-                    BoostType = BoostType.IncreasedDefence,
+                    BoostType = BoostType.IncreasedHealth,
                     TroopRestriction = TroopType.WallBreaker,
-                    BoostRestrictionType = BoostRestrictionType.TwoSecondsAfterActiveSkillRelease,
-                    BoostAmounts = new List<double> { 30 }
+                    BoostRestrictionType = BoostRestrictionType.GatheringResources,
+                    BoostAmounts = new List<double> { 10 }
                 }
             },
             TalentTree = Leader.GetTree()                                                               
@@ -57,9 +80,9 @@ public class Laurent
 
         
 
-        var carefulPlanning = new TalentSkill
+        var foodAddiction = new TalentSkill
         {
-            Name = "Careful Planning",
+            Name = "Food Addiction",
             Boosts = new List<Boost>
             {
             },
@@ -70,13 +93,13 @@ public class Laurent
                   
         var peacefulCourage = new TalentSkill
         {
-            Name = "Peaceful Courage",
+            Name = "Secret Recipe",
             Boosts = new List<Boost>
             {
                 new Boost
                 {
                     BoostType = BoostType.RestoreRageAfterActiveSkill,
-                    Chance = 10,
+                    BoostRestrictionType = BoostRestrictionType.AttackingGatherers,
                     BoostAmounts = new List<double> { 60 }
                 },
                 new Boost
@@ -91,20 +114,20 @@ public class Laurent
         
         
 
-        var laurent = new Fighter
+        var remy = new Fighter
         {
-            Name = "Laurent",
-            CanTalentLeap = true,
+            Name = "Remy",
+            CanTalentLeap = false,
             FighterSkills = new List<FighterSkill>
             {
-                standingGuard, devotedProtector
+                spicedUp, devotedProtector
             },
             TalentSkills = new List<TalentSkill>
             {
-                engineTuning, carefulPlanning, peacefulCourage
+                criticalCargo, foodAddiction, peacefulCourage
             }
         };
 
-        return laurent;
+        return remy;
     }
 }

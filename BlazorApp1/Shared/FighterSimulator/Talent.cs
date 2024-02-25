@@ -43,9 +43,9 @@ public class Talent
     public Talent LastRequiredTalent { get; set; }
     public int TalentPointCost => Boosts.Any() ? Boosts.FirstOrDefault().BoostAmounts.Count() : 0;
     
-    public Talent WithOptionalTalent(BoostType boostType, List<Double> boostAmounts, TroopType? troopRestriction = null, BoostRestrictionType? boostRestrictionType = null)
+    public Talent OptionalTalent(BoostType boostType, List<Double> boostAmounts, TroopType? troopRestriction = null, BoostRestrictionType? boostRestrictionType = null)
     {
-        var optionalTalent = WithNextTalent(boostType, boostAmounts, troopRestriction, boostRestrictionType);
+        var optionalTalent = NextTalent(boostType, boostAmounts, troopRestriction, boostRestrictionType);
         optionalTalent.Optional = true;
         // Set the parent talent so when traversing it can easily get back to the main path
         optionalTalent.LastRequiredTalent = LastRequiredTalent;
@@ -55,11 +55,12 @@ public class Talent
         return optionalTalent;
     }
     
-    public Talent WithNextTalent(BoostType boostType, List<Double> boostAmounts, TroopType? troopRestriction = null, BoostRestrictionType? boostRestrictionType = null)
+    public Talent NextTalent(BoostType boostType, List<Double> boostAmounts, TroopType? troopRestriction = null, BoostRestrictionType? boostRestrictionType = null)
     {
         var nextTalent = new Talent(boostType, boostAmounts, troopRestriction, boostRestrictionType);
         // Set a few properties for debugging help
         nextTalent.TalentDepth = TalentDepth + 1;
+        nextTalent.TalentTreeName = TalentTreeName;
         nextTalent.RootTalent = RootTalent;
         nextTalent.LastRequiredTalent = nextTalent;
         (LastRequiredTalent ?? this).NextTalents.Add(nextTalent);

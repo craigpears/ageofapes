@@ -9,6 +9,7 @@ public class ArmyBoosts
     public double DamageDealtByCounterAttacks { get; set; }
     public double IncreasedMaxTroopsPercent { get; set; }
     public double MaxTroopsMultiplier => (IncreasedMaxTroopsPercent / 100) + 1;
+    public List<Boost> ApplicableBoosts { get; set; }
 
     public void AddGearBoosts(List<Troop> troops)
     {

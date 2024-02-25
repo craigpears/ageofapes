@@ -27,5 +27,19 @@ public enum BoostType
     ConvertSeriouslyWoundedToLightlyWounded,
     IncreasedRageOnReceiveSkillAttack,
     IncreasedGatheringSpeed,
-    IncreasedLoad
+    IncreasedLoad,
+    ConvertDefeatedToSeriouslyWounded,
+    ReduceEnemyDefence,
+    IncreasedSentryTowerDamage,
+    DamageTakenReduced,
+    IncreasedDefenceOfSentryTowers,
+    RestoreRageWhenAttacked,
+    IncreasedActiveSkillDamage,
+    NeutralUnitBreaker,
+    IncreasedDamageToNeutralUnits,
+    FewerActionPoints,
+    IncreasedMasterFighterSkillDamage,
+    IncreasedDeputyFighterSkillDamage,
+    ReduceEnemyHealing,
+    SkillDamageFactor
 }
