@@ -10,4 +10,5 @@ public class FightSimulationOptions
     
     public bool Garrison { get; set; }
     public bool AttackingNeutralUnits { get; set; }
+    public bool RecalculateArmies { get; set; }
 }

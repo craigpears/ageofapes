@@ -25,4 +25,7 @@ public enum BoostRestrictionType
     HealthAbove70,
     AttackingNeutralUnits,
     MultipliedByAdjacentAllies,
+    TwoSecondsAfterTakingSkillDamage,
+    AfterTakingSkillDamage,
+    FirstTenSecondsOfBattle
 }

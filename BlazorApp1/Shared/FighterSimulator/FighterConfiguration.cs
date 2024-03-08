@@ -14,4 +14,18 @@ public class FighterConfiguration
                 .GroupBy(x => x.TalentTreeName)
                 .Select(x => $"{x.Key} - {x.Sum(x => x.TalentPointCost)}").ToList()
         );
+
+    public TroopType PreferredTroopType
+    {
+        get
+        {
+            var troopTypeBoosts = SelectedTalents
+                .SelectMany(x => x.Boosts)
+                .Where(x => x.TroopRestriction != null)
+                .Select(x => x.TroopRestriction)
+                .ToList();
+
+            return troopTypeBoosts.First() ?? TroopType.ThreeUnitTypes;
+        }
+    }
 }

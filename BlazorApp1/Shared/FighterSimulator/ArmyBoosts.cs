@@ -2,7 +2,6 @@
 
 public class ArmyBoosts
 {
-    public List<Boost> ProbabilityBoosts = new List<Boost>();
     public List<UnitBoosts> UnitBoosts { get; set; } = new List<UnitBoosts>();
     public double DamageDealtByNormalAttacks { get; set; }
     public double DamageDealtBySkillsPercentIncrease { get; set; }
@@ -16,7 +15,7 @@ public class ArmyBoosts
         // Assume an army troops are all of the same level
         foreach (var unitBoost in UnitBoosts)
         {
-            var matchingTroop = troops.SingleOrDefault(x => x.TroopType == unitBoost.TroopType);
+            var matchingTroop = troops.FirstOrDefault(x => x.TroopType == unitBoost.TroopType);
             if (matchingTroop != null)
             {
                 unitBoost.AttackBoostPercent += matchingTroop.GearAttackBoost;

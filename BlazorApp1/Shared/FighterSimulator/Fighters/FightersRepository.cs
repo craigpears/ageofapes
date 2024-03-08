@@ -10,20 +10,16 @@ public class FightersRepository
         var fighters = new List<Fighter>();
 
         // Leaders
-        fighters.Add(Derrick.GetFighter());
-        fighters.Add(Maximus.GetFighter());
+        //fighters.Add(Derrick.GetFighter());
+        //fighters.Add(Maximus.GetFighter());
         
         // Gatherers
-        fighters.Add(Laurent.GetFighter());
-        fighters.Add(Remy.GetFighter());
+        //fighters.Add(Laurent.GetFighter());
+        //fighters.Add(Remy.GetFighter());
         
         // Shooters
         fighters.Add(BonoBoom.GetFighter());
-        fighters.Add(Carina.GetFighter());
-        //fighters.Add(Genesis.GetFighter());
-        //fighters.Add(Len.GetFighter());
-        //fighters.Add(Mike.GetFighter());
-        
+        //fighters.Add(Carina.GetFighter());
 
         return fighters;
     }

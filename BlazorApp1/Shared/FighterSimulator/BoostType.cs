@@ -41,5 +41,9 @@ public enum BoostType
     IncreasedMasterFighterSkillDamage,
     IncreasedDeputyFighterSkillDamage,
     ReduceEnemyHealing,
-    SkillDamageFactor
+    SkillDamageFactor,
+    SilenceTarget,
+    IncreasedDamageFromCounteringUnit,
+    CrowdControlShield,
+    ReduceEnemyAttack
 }

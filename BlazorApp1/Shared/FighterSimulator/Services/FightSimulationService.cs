@@ -11,8 +11,8 @@ public class FightSimulationService
     public List<AttackResult> SimulateFight(
             FightSimulationOptions fightOptions, 
             FighterStatsService statsService,
-            Func<FighterConfiguration, Army> attackingArmyFunc,
-            Func<FighterConfiguration, Army> defendingArmyFunc
+            Func<FighterConfiguration, Func<Army, Army, Army>> attackingArmyFunc,
+            Func<FighterConfiguration, Func<Army, Army, Army>> defendingArmyFunc
         )
     {
         
@@ -41,23 +41,21 @@ public class FightSimulationService
         return results;
     }
 
-    public AttackResult SimulateCityAttack(Army attackingArmy, Army defendingArmy, FightSimulationOptions options)
+    public AttackResult SimulateCityAttack(Func<Army, Army, Army> yourArmyFunc, Func<Army, Army, Army> enemyArmyFunc, FightSimulationOptions options)
     {
-        // TODO: Need to improve this code so it doesn't modify the original models if doing anything more complicated
-        attackingArmy.ArmyBoosts.AddGearBoosts(attackingArmy.Troops);
-        defendingArmy.ArmyBoosts.AddGearBoosts(defendingArmy.Troops);
-        
-        attackingArmy.Troops.ForEach(x => x.CalculateStats(attackingArmy.ArmyBoosts));
-        defendingArmy.Troops.ForEach(x => x.CalculateStats(defendingArmy.ArmyBoosts));
+        var yourArmy = RefreshArmy(yourArmyFunc, null, null, options);
+        var enemyArmy = RefreshArmy(enemyArmyFunc, null, null, options);
 
-        var cannonAttack = attackingArmy.Troops.All(x => x.TroopType == TroopType.WallBreaker) && options.UseCannons;
+        var cannonAttack = yourArmy.Troops.All(x => x.TroopType == TroopType.WallBreaker) && options.UseCannons;
 
         var attackResult = new AttackResult
         {
-            AttackingArmy = attackingArmy,
+            YourArmy = yourArmy,
+            EnemyArmy = enemyArmy
         };
         
-        while (attackingArmy.Troops.Any(x => x.Count > 0) && defendingArmy.Troops.Any(x => x.Count > 0))
+        while (   yourArmy.GarrisonTroops.Any(x => x.Count > 0 || x.RefreshRoundsLeft != null) 
+               && enemyArmy.GarrisonTroops.Any(x => x.Count > 0 || x.RefreshRoundsLeft != null))
         {
             // TODO: Not worrying about counter unit type damage yet
             // TODO: No idea how things work if there are a mix of troops - evidence seems to show it's spread evenly by unit count since units rarely get wiped out
@@ -69,42 +67,46 @@ public class FightSimulationService
             // TODO: Need to implement DamageTakenReduced
             // TODO: Need to implement DefendingAgainstMultipleTroops
             // TODO: Implement IncreasedNormalAttackDamage
+            // TODO: Implement silence target boost
+            // TODO: Implement IncreasedDamageFromCounteringUnit
+            // TODO: Implement CrowdControlShield boost type (immune from intimidation, silence, speed reduction)
+            // TODO: Implement TwoSecondsAfterTakingSkillDamage, AfterTakingSkillDamage
             var log = new AttackLog
             {
-                AttackerDamageFactor = attackingArmy.Troops.Average(x => x.CalculatedAttack) / defendingArmy.Troops.Average(x => x.CalculatedDefence),
-                DefenderDamageFactor = defendingArmy.Troops.Average(x => x.CalculatedAttack) / attackingArmy.Troops.Average(x => x.CalculatedDefence)
+                YourDamageFactor = yourArmy.Troops.Average(x => x.CalculatedAttack) / enemyArmy.Troops.Average(x => x.CalculatedDefence),
+                EnemyDamageFactor = enemyArmy.Troops.Average(x => x.CalculatedAttack) / yourArmy.Troops.Average(x => x.CalculatedDefence)
             };
 
-            var attackerDamageMultiplier = 1.0 + (attackingArmy.ArmyBoosts.DamageDealtByNormalAttacks / 100);
-            var defenderDamageMultiplier = 1.0 + (defendingArmy.ArmyBoosts.DamageDealtByNormalAttacks / 100);
+            var yourDamageFactor = 1.0 + (yourArmy.ArmyBoosts.DamageDealtByNormalAttacks / 100);
+            var enemyDamageFactor = 1.0 + (enemyArmy.ArmyBoosts.DamageDealtByNormalAttacks / 100);
 
-            log.AttackerDamage = log.AttackerDamageFactor * attackingArmy.Troops.Sum(x => x.Count) * attackerDamageMultiplier;
-            log.DefenderDamage = log.DefenderDamageFactor * defendingArmy.Troops.Sum(x => x.Count) * defenderDamageMultiplier;
+            log.YourDamage = log.YourDamageFactor * yourArmy.Troops.Sum(x => x.Count) * yourDamageFactor;
+            log.EnemyDamage = log.EnemyDamageFactor * enemyArmy.Troops.Sum(x => x.Count) * enemyDamageFactor;
 
-            log.AttackerTotalHealth = attackingArmy.Troops.Average(x => x.CalculatedHealth * x.Count);
-            log.DefenderTotalHealth = defendingArmy.Troops.Average(x => x.CalculatedHealth * x.Count);
+            log.YourTotalHealth = yourArmy.Troops.Average(x => x.CalculatedHealth * x.Count);
+            log.EnemyTotalHealth = enemyArmy.Troops.Average(x => x.CalculatedHealth * x.Count);
             
             // TODO: Not worrying about wounded yet
-            log.DefenderLostTroops = ProcessArmyLosses(defendingArmy, log.AttackerDamage);
+            log.EnemyLostTroops = ProcessArmyLosses(enemyArmy, log.YourDamage);
             
             
             
             // TODO: Implement different logic for counter attacks
-            attackingArmy.RageLevel += RageOnNormalAttack;
+            yourArmy.RageLevel += RageOnNormalAttack;
 
-            if (!options.UseShooterUnitSkill && (!options.UseCannons || attackingArmy.FighterConfiguration.Fighter.Name == "Derrick"))
+            if (!options.UseShooterUnitSkill && (!options.UseCannons || yourArmy.FighterConfiguration.Fighter.Name == "Derrick"))
             {
-                var attackerSkillsResult = ProcessSkills(attackingArmy, defendingArmy, options);
-                log.AttackerSkillDamage = attackerSkillsResult.TotalDamage;
+                var yourSkillsResult = ProcessSkills(yourArmy, enemyArmy, options);
+                log.YourSkillDamage = yourSkillsResult.TotalDamage;
             }
             
             // TODO: If scenarios get more complex will need to simulate cannons and shooter skills having half attack rates
             if (!cannonAttack && !options.UseShooterUnitSkill)
             {
-                log.AttackerLostTroops = ProcessArmyLosses(attackingArmy, log.DefenderDamage);
+                log.YourLostTroops = ProcessArmyLosses(yourArmy, log.EnemyDamage);
                 
-                defendingArmy.RageLevel += RageOnNormalAttack;
-                var defenderSkillsResult = ProcessSkills(attackingArmy, attackingArmy, options);
+                enemyArmy.RageLevel += RageOnNormalAttack;
+                var defenderSkillsResult = ProcessSkills(yourArmy, yourArmy, options);
             }
             // TODO: Implement temporary boosts, like x% chance and those active after an active skill release
             // TODO: Implement ThreeSecondsAfterSuccessfulChance restriction type 
@@ -112,9 +114,29 @@ public class FightSimulationService
             // TODO: Implement healing
             
             attackResult.AttackLogs.Add(log);
+            
+            yourArmy = RefreshArmy(yourArmyFunc, yourArmy, enemyArmy, options);
+            enemyArmy = RefreshArmy(enemyArmyFunc, enemyArmy, yourArmy, options); 
         }
 
         return attackResult;
+    }
+
+    private Army RefreshArmy(Func<Army, Army, Army> armyFunc, Army currentArmy, Army enemyArmy, FightSimulationOptions options)
+    {
+        // TODO: Do things in this refresh loop like updating army buffs based on percentage troops alive, random chance events, x second events etc.
+        // TODO: Pass in the opposing army so you can simulate healing, refreshing reinforcements etc
+        var shouldGenerateArmy = currentArmy == null || options.RecalculateArmies;
+        var newArmy = shouldGenerateArmy ? armyFunc(currentArmy, enemyArmy) : currentArmy;
+
+        if (newArmy != currentArmy)
+        {
+            newArmy.ArmyBoosts.AddGearBoosts(newArmy.Troops);
+        }
+        
+        newArmy.Troops.ForEach(x => x.CalculateStats(newArmy.ArmyBoosts));
+        
+        return newArmy;
     }
 
     private static ProcessSkillsResult ProcessSkills(Army attackingArmy, Army defendingArmy, FightSimulationOptions options)
@@ -196,6 +218,7 @@ public class FightSimulationService
             losses = Math.Min(losses, troop.Count);
             totalLosses += losses;
             troop.Count -= losses;
+            troop.LossesSinceLastRefresh += losses;
         }
 
         return totalLosses;

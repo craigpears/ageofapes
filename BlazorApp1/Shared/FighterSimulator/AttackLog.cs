@@ -2,13 +2,13 @@
 
 public class AttackLog
 {
-    public double AttackerDamageFactor { get; set; }
-    public double DefenderDamageFactor { get; set; }
-    public double AttackerDamage { get; set; }
-    public double DefenderDamage { get; set; }
-    public double AttackerTotalHealth { get; set; }
-    public double DefenderTotalHealth { get; set; }
-    public int DefenderLostTroops { get; set; }
-    public int AttackerLostTroops { get; set; }
-    public double AttackerSkillDamage { get; set; }
+    public double YourDamageFactor { get; set; }
+    public double EnemyDamageFactor { get; set; }
+    public double YourDamage { get; set; }
+    public double EnemyDamage { get; set; }
+    public double YourTotalHealth { get; set; }
+    public double EnemyTotalHealth { get; set; }
+    public int EnemyLostTroops { get; set; }
+    public int YourLostTroops { get; set; }
+    public double YourSkillDamage { get; set; }
 }

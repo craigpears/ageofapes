@@ -5,8 +5,10 @@ public static class AttackResultExtensions
     public static AttackResult GetBestResult(this List<AttackResult> results)
     {
         var bestResult = results
-            .OrderBy(x => x.AttackLogs.Count)
-            .ThenByDescending(x => x.AttackLogs.Max(a => a.AttackerDamage))
+            .OrderByDescending(x => x.TotalEnemyLostTroops)
+            .ThenByDescending(x => x.YourRemainingTroops)
+            .ThenBy(x => x.NumberOfRounds)
+            .ThenByDescending(x => x.AttackLogs.Max(a => a.YourDamage))
             .First();
 
         return bestResult;

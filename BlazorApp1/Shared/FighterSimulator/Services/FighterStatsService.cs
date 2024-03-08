@@ -354,7 +354,9 @@ public class FighterStatsService
     public UnitBoosts GetUnitBoosts(List<Talent> talents, TroopType troopType, FightSimulationOptions fightSimulationOptions)
     {
         var filteredTalents = talents
-            .Where(x => x.Boosts.Any(b => b.TroopRestriction == troopType || b.TroopRestriction == null))
+            .Where(x => x.Boosts.Any(b => b.TroopRestriction == troopType 
+                                          || (b.TroopRestriction == TroopType.ThreeUnitTypes && !fightSimulationOptions.UseCannons) 
+                                          || b.TroopRestriction == null))
             .ToList();
         
         return new UnitBoosts

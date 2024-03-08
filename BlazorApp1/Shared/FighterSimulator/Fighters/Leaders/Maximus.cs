@@ -23,7 +23,7 @@ public class Maximus
             Boosts = new List<Boost>
             {
                 new Boost { 
-                    BoostType = BoostType.SkillDamageFactor, // TODO: Check this enum is correct, may need one for values and another for percentages
+                    BoostType = BoostType.SkillDamageFactor,
                     BoostAmounts = new List<double> { 1000 },  
                     Chance = 15,
                     BoostRestrictionType = BoostRestrictionType.SeigeMode
@@ -41,7 +41,7 @@ public class Maximus
                     BoostAmounts = new List<double> { 50 },
                     Chance = 20,
                     BoostRestrictionType = BoostRestrictionType.HealthBelowHalf,
-                    DurationSeconds = 2 // TODO: Change other enums to use this duration as well
+                    DurationSeconds = 2
                 },
                 new Boost { 
                     BoostType = BoostType.IncreasedDefence,
@@ -60,7 +60,7 @@ public class Maximus
             {
                 new Boost { 
                     BoostType = BoostType.IncreasedAttack,
-                    TroopRestriction = TroopType.ThreeUnitTypes,  // TODO: Don't think this is implemented yet
+                    TroopRestriction = TroopType.ThreeUnitTypes,
                     BoostAmounts = new List<double> { 10 }
                 },
                 new Boost { 
@@ -69,7 +69,7 @@ public class Maximus
                     BoostAmounts = new List<double> { 5 }
                 },
                 new Boost { 
-                    BoostType = BoostType.ConvertDefeatedToSeriouslyWounded, // TODO: Needs implementing
+                    BoostType = BoostType.ConvertDefeatedToSeriouslyWounded,
                     TroopRestriction = TroopType.ThreeUnitTypes, 
                     BoostAmounts = new List<double> { 10 }
                 },
@@ -94,7 +94,7 @@ public class Maximus
                 new Boost
                 {
                     BoostType = BoostType.IncreasedAttack,
-                    BoostRestrictionType = BoostRestrictionType.SeigeMode, // TODO: Need to double check the game treats cannons like a seige mode
+                    BoostRestrictionType = BoostRestrictionType.SeigeMode,
                     BoostAmounts = new List<double> { 10 }
                 },
                 new Boost
@@ -109,7 +109,7 @@ public class Maximus
         
         var maskedGladiator = new TalentSkill
         {
-            Name = "Masked Gladiator ",
+            Name = "Masked Gladiator",
             Boosts = new List<Boost>
             {
                 new Boost
