@@ -20,4 +20,5 @@ public abstract class TalentClass
     protected static List<double> OneAndAHalfPercent = new List<double> { 1.5 };
     
     protected static List<double> MinusOnePercentSteps = new List<double> { -1, -2, -3 };
+    protected static List<double> MinusHalfPercentSteps = new List<double> { -0.5, -0.1, -1.5 };
 }

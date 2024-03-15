@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics;
+using BlazorApp1.Shared.FighterSimulator.Extensions;
+using BlazorApp1.Shared.FighterSimulator.Scenarios;
 
 namespace BlazorApp1.Shared.FighterSimulator;
 
@@ -8,37 +10,49 @@ public class FightSimulationService
     public static int RageOnCounterAttack = 45;
     
     // TODO: Improve this into a set of parameters to support fighters that do better in 3v3 fights, modified mutants, defending, 1v1 map fights etc.
-    public List<AttackResult> SimulateFight(
-            FightSimulationOptions fightOptions, 
-            FighterStatsService statsService,
-            Func<FighterConfiguration, Func<Army, Army, Army>> attackingArmyFunc,
-            Func<FighterConfiguration, Func<Army, Army, Army>> defendingArmyFunc
+    public void SimulateFight(
+            FightScenario scenario, 
+            FighterStatsService statsService
         )
     {
         
         var repo = new FightersRepository();
         
         var fighters = repo.GetFighters();
-        var results = new List<AttackResult>();
+        
+        
         foreach (var fighter in fighters)
         {
-            var configurations = statsService.GetConfigurationsForFighter(fighter, fightOptions);
-            var i = 0;
-            foreach (var configuration in configurations)
+            var results = new List<AttackResult>();
+            var otherFighters = fighters.Where(x => x != fighter).ToList();
+            foreach (var deputyFighter in otherFighters)
             {
-                if (i++ % 10000 == 0)
+                // Test with each possible choice of talent on the deputy
+                for (var selectedTalent = 0; selectedTalent < 3; selectedTalent++)
                 {
-                    Debug.WriteLine($"Simulating attack {i}/{configurations.Count()}");
+                    var comboResults = new List<AttackResult>();
+                    var configurations = statsService.GetConfigurationsForFighter(fighter, deputyFighter, selectedTalent, scenario.FightSimulationOptions);
+                    Debug.WriteLine($"Simulating attacks");
+                    
+                    foreach (var configuration in configurations)
+                    {            
+                        var attackResult = SimulateCityAttack(scenario.YourArmyFunc(configuration), scenario.EnemyArmyFunc(configuration), scenario.FightSimulationOptions);
+                        attackResult.FightOptions = scenario.FightSimulationOptions;
+                        comboResults.Add(attackResult);
+                    }
+                    
+                    var bestResult = comboResults.GetBestResult();
+                    results.Add(bestResult);
                 }
-                
-                var attackResult = SimulateCityAttack(attackingArmyFunc(configuration), defendingArmyFunc(configuration), fightOptions);
-                attackResult.FightOptions = fightOptions;
-                results.Add(attackResult);
             }
+            
+            Debug.WriteLine($"Saving results for {fighter}");
+            scenario.SaveResults(results);
             
         }
 
-        return results;
+        scenario.FlushResults();
+
     }
 
     public AttackResult SimulateCityAttack(Func<Army, Army, Army> yourArmyFunc, Func<Army, Army, Army> enemyArmyFunc, FightSimulationOptions options)
@@ -77,8 +91,11 @@ public class FightSimulationService
                 EnemyDamageFactor = enemyArmy.Troops.Average(x => x.CalculatedAttack) / yourArmy.Troops.Average(x => x.CalculatedDefence)
             };
 
-            var yourDamageFactor = 1.0 + (yourArmy.ArmyBoosts.DamageDealtByNormalAttacks / 100);
-            var enemyDamageFactor = 1.0 + (enemyArmy.ArmyBoosts.DamageDealtByNormalAttacks / 100);
+            var yourTroopExtraDamage = yourArmy.Troops.Average(x => x.CalculatedDamageBoost);
+            var enemyTroopExtraDamage = enemyArmy.Troops.Average(x => x.CalculatedDamageBoost);
+
+            var yourDamageFactor = 1.0 + ((yourArmy.ArmyBoosts.DamageDealtByNormalAttacks + yourTroopExtraDamage) / 100);
+            var enemyDamageFactor = 1.0 + ((enemyArmy.ArmyBoosts.DamageDealtByNormalAttacks + enemyTroopExtraDamage) / 100);
 
             log.YourDamage = log.YourDamageFactor * yourArmy.Troops.Sum(x => x.Count) * yourDamageFactor;
             log.EnemyDamage = log.EnemyDamageFactor * enemyArmy.Troops.Sum(x => x.Count) * enemyDamageFactor;
@@ -89,16 +106,15 @@ public class FightSimulationService
             // TODO: Not worrying about wounded yet
             log.EnemyLostTroops = ProcessArmyLosses(enemyArmy, log.YourDamage);
             
-            
-            
-            // TODO: Implement different logic for counter attacks
-            yourArmy.RageLevel += RageOnNormalAttack;
-
             if (!options.UseShooterUnitSkill && (!options.UseCannons || yourArmy.FighterConfiguration.Fighter.Name == "Derrick"))
             {
-                var yourSkillsResult = ProcessSkills(yourArmy, enemyArmy, options);
-                log.YourSkillDamage = yourSkillsResult.TotalDamage;
+                // TODO: Implement different logic for counter attacks
+                yourArmy.RageLevel += RageOnNormalAttack;
             }
+            
+            var yourSkillsResult = ProcessSkills(yourArmy, enemyArmy, options);
+            log.YourSkillDamage = yourSkillsResult.TotalDamage;
+            log.EnemyLostTroops += yourSkillsResult.TroopsKilled;
             
             // TODO: If scenarios get more complex will need to simulate cannons and shooter skills having half attack rates
             if (!cannonAttack && !options.UseShooterUnitSkill)
@@ -133,8 +149,24 @@ public class FightSimulationService
         {
             newArmy.ArmyBoosts.AddGearBoosts(newArmy.Troops);
         }
-        
-        newArmy.Troops.ForEach(x => x.CalculateStats(newArmy.ArmyBoosts));
+
+        foreach (var troop in newArmy.Troops)
+        {
+            TroopType? counteredTroopType = troop.TroopType switch
+            {
+                TroopType.Hitter => TroopType.Pilot,
+                TroopType.Pilot => TroopType.Shooter,
+                TroopType.Shooter => TroopType.Hitter,
+                _ => null
+            };
+            
+            // TODO: This only works if there is only one troop type, needs improving
+            var useCounterBoosts = enemyArmy != null && enemyArmy.Troops.Any(x => x.TroopType == counteredTroopType);
+            
+            var applicableBoosts = new List<Boost>();
+
+            troop.CalculateStats(newArmy.ArmyBoosts, useCounterBoosts);
+        }
         
         return newArmy;
     }
@@ -164,7 +196,7 @@ public class FightSimulationService
             // TODO: Work out what, if any, the difference is between the above two things
             // TODO: Need to confirm this is right - do unit stats and attack really not factor into skill damage at all?
             // TODO: Implement passive skill chance
-            InflictSkillDamage(attackingArmy, defendingArmy, skillDamageFactor, result);
+            InflictSkillDamage(attackingArmy, defendingArmy, skillDamageFactor, activeSkill.MaxTargets, result);
 
             // TODO: Implement RestoreRageAfterActiveSkill boost type
             // TODO: Implement ChanceToAttackTwice
@@ -173,8 +205,7 @@ public class FightSimulationService
             // TODO: Implement increased master fighter skill damage and IncreasedDeputyFighterSkillDamage
         }
 
-        var passiveSkills = attackingArmy.FighterConfiguration.Fighter.FighterSkills
-            .SelectMany(x => x.Boosts)
+        var passiveSkills = attackingArmy.ArmyBoosts.ApplicableBoosts
             .Where(x => x.BoostType == BoostType.SkillDamageFactor)
             .ToList();
 
@@ -185,19 +216,21 @@ public class FightSimulationService
             var damageFactor = (int)passiveSkill.MaxBoostAmount;
             if (randomNumber >= passiveSkill.Chance)
             {
-                InflictSkillDamage(attackingArmy, defendingArmy, damageFactor, result);
+                InflictSkillDamage(attackingArmy, defendingArmy, damageFactor, 1, result);
             }
         }
 
         return result;
     }
 
-    private static void InflictSkillDamage(Army attackingArmy, Army defendingArmy, int skillDamageFactor,
+    private static void InflictSkillDamage(Army attackingArmy, Army defendingArmy, int skillDamageFactor, int maxTargets,
         ProcessSkillsResult result)
     {
+        var targets = Math.Min(defendingArmy.NumberOfPlayers, Math.Max(maxTargets, 1));
         var skillTotalDamage = (skillDamageFactor / defendingArmy.Troops.Average(x => x.CalculatedDefence))
                                * (1 + (attackingArmy.ArmyBoosts.DamageDealtBySkillsPercentIncrease / 100))
-                               * attackingArmy.Troops.Sum(x => x.Count);
+                               * attackingArmy.Troops.Sum(x => x.Count)
+                               * targets;
 
         result.TotalDamage += (int)skillTotalDamage;
         result.TroopsKilled += ProcessArmyLosses(defendingArmy, skillTotalDamage);

@@ -3,6 +3,8 @@
 public class FighterConfiguration
 {
     public Fighter Fighter { get; set; }
+    public Fighter? DeputyFighter { get; set; }
+    public int DeputySelectedTalent { get; set; }
     public List<Talent> SelectedTalents { get; set; }
     public ArmyBoosts ArmyBoosts { get; set; }
 
@@ -28,4 +30,5 @@ public class FighterConfiguration
             return troopTypeBoosts.First() ?? TroopType.ThreeUnitTypes;
         }
     }
+
 }

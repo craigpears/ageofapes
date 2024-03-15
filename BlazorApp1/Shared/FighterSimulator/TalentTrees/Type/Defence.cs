@@ -5,58 +5,44 @@ public class Defence : TalentClass
 
     public static Talent GetTree()
     {
-        throw new NotImplementedException();
-        var rootTalent = new Talent(BoostType.IncreasedAttack, OnePercent);
+        var rootTalent = new Talent(BoostType.IncreasedAttack, TwoHalfPercentSteps);
         rootTalent.TalentTreeName = "Defence";
 
         // Left Tree
         var leftTree = rootTalent
-            .NextTalent(BoostType.IncreasedMarchingSpeed, TwoOneAndHalfPercentSteps)
-            .NextTalent(BoostType.IncreasedDamageToCounteredUnit, ThreePercentSteps)
-            .OptionalTalent(BoostType.IncreasedAttack, TwoPercentSteps, boostRestrictionType: BoostRestrictionType.HealthBelowHalf)
-            .NextTalent(BoostType.IncreasedHealth, OnePercent)
-            .NextTalent(BoostType.IncreasedMarchingSpeed, TwoOneAndHalfPercentSteps)
-            .NextTalent(BoostType.IncreasedMarchingSpeed, TwoOneAndHalfPercentSteps)
-            .OptionalTalent(BoostType.IncreasedDefence, OnePercent);
-            
-        leftTree.NextTalents.Add(new Talent
-            {
-                 Boosts = new List<Boost>
-                 {
-                     new Boost
-                     {
-                         BoostAmounts = new List<double> { 2.0, 4.0, 6.0 },
-                         Chance = 10,
-                         DurationSeconds = 2
-                     }
-                 },
-                  LastRequiredTalent = leftTree.LastRequiredTalent,
-                  Optional = true,
-                  TalentDepth = leftTree.TalentDepth,
-                  RootTalent = leftTree.RootTalent,
-                  TalentTreeName = leftTree.TalentTreeName
-            });
+            .NextTalent(BoostType.IncreasedHealth, HalfPercent)
+            .NextTalent(BoostType.IncreasedDefence, new List<double> { 0.6, 1.2, 1.8 })
+            .OptionalTalent(BoostType.ReducedDamageFromNormalAttacks, HalfPercent)
+            .NextTalent(BoostType.TroopsTakeLessSkillDamage, TwoPercentSteps)
+            .NextTalent(BoostType.IncreasedMarchingSpeed, OneAndHalfPercentSteps)
+            .OptionalTalent(BoostType.IncreasedDefence, HalfPercent)
+            .OptionalTalent(BoostType.IncreasedAttack, HalfPercent)
+            .NextTalent(BoostType.IncreasedHealth, HalfPercent)
+            .OptionalTalent(BoostType.TakesLessDamage, HalfPercentSteps)
+            .NextTalent(BoostType.IncreasedDefence, HalfPercentSteps)
+            .OptionalTalent(BoostType.ReducedDamageFromNormalAttacks, HalfPercent);
 
-        leftTree.NextTalent(BoostType.IncreasedAttack, OnePercentSteps)
-            .OptionalTalent(BoostType.ReducedDamageFromNormalAttacks, OnePercent)
-            .OptionalTalent(BoostType.TakesLessCounterAttackDamage, HalfPercent)
-            .NextTalent(BoostType.ReduceEnemyDefence, new List<double> { 1.5, 3.0, 4.5, 6.0 })
-            .NextTalent(BoostType.IncreasedSkillDamage, new List<double> { 2.0, 4.0, 6.0, 8.0, 10.0 });
+        var combatFitness = leftTree.NextTalent(BoostType.DamageTakenReduced, new List<double> { 3.0, 6.0, 9.0, 12.0 });
+        combatFitness.Boosts.First().Chance = 10;
+        combatFitness.Boosts.First().DurationSeconds = 1;
+
+        combatFitness.NextTalent(BoostType.DamageTakenReduced, new List<double> { 1.5, 3.0, 4.5, 6.0 }, boostRestrictionType: BoostRestrictionType.HealthBelowHalf);
         
         // Right tree
         rootTalent
-            .NextTalent(BoostType.IncreasedHealth, TwoSinglePercentSteps)
-            .NextTalent(BoostType.IncreasedAttack, OnePercentSteps)
-            .NextTalent(BoostType.IncreasedDefence, OnePercentSteps)
-            .OptionalTalent(BoostType.IncreasedMarchingSpeed, TwoOneAndHalfPercentSteps)
-            .OptionalTalent(BoostType.IncreasedRageOnNormalAttack, ThreePercentSteps)
-            .NextTalent(BoostType.IncreasedAttack, OnePercentSteps)
-            .OptionalTalent(BoostType.IncreasedDefence, OnePercent)
-            .OptionalTalent(BoostType.IncreasedHealth, OnePercent)
-            .NextTalent(BoostType.IncreasedAttack, OnePercent)
-            .NextTalent(BoostType.IncreasedHealth, OnePercent)
-            .NextTalent(BoostType.IncreasedDamage, new List<double> { 0.5, 1.0, 1.5, 2.0 });
-
+            .NextTalent(BoostType.IncreasedAttack, HalfPercent)
+            .NextTalent(BoostType.IncreasedCounterAttackDamage, HalfPercentSteps)
+            .NextTalent(BoostType.TakesLessCounterAttackDamage, HalfPercent)
+            .NextTalent(BoostType.IncreasedRageOnReceiveNormalAttack, new List<double> { 6, 12, 18, 24 })
+            .OptionalTalent(BoostType.IncreasedDefence, HalfPercent)
+            .OptionalTalent(BoostType.IncreasedAttack, HalfPercent)
+            .NextTalent(BoostType.IncreasedMarchingSpeed, OneAndAHalfPercent)
+            .NextTalent(BoostType.IncreasedHealth, TwoHalfPercentSteps)
+            .OptionalTalent(BoostType.TakesLessDamage, OnePercentSteps).WithExtraBoost(BoostType.IncreasedDamage, MinusHalfPercentSteps)
+            .NextTalent(BoostType.IncreasedAttack, HalfPercentSteps)
+            .OptionalTalent(BoostType.TakesLessCounterAttackDamage, HalfPercent)
+            .NextTalent(BoostType.IncreasedHealth, new List<double> { 1.5, 3.0, 4.5, 6.0 }, boostRestrictionType: BoostRestrictionType.TwoSecondsAfterActiveSkillRelease);
+        
         return rootTalent;
     }
 }

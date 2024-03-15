@@ -13,4 +13,5 @@ public class Boost
     public int Chance { get; set; }
     public int DurationSeconds { get; set; }
     public string Source { get; set; }
+    public string Name { get; set; }
 }

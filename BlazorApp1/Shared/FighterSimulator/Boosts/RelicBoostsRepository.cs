@@ -134,40 +134,112 @@ public class RelicBoostsRepository
         
         relicBoosts.AddRange(bloodletterAxe);
         
-        var dentalPicker = new List<Boost> {
+        relicBoosts.AddRange(new List<Boost> {
             new Boost
             {
+                Name = "Dental Picker",
                 BoostType = BoostType.IncreasedSkillDamage,
                 BoostRestrictionType = BoostRestrictionType.AttackingNeutralUnits,
                 BoostAmounts = new List<double> { 20.0, 20.0 },
                 TroopRestriction = TroopType.Pilot
             }
-        };
+        });
         
-        relicBoosts.AddRange(dentalPicker);
-        
-        var orthopedicHammer = new List<Boost> {
+        relicBoosts.AddRange(new List<Boost> {
             new Boost
             {
+                Name = "Orthopedic Hammer",
                 BoostType = BoostType.IncreasedAttack,
                 BoostAmounts = new List<double> { 2.0, 3.2 },
                 TroopRestriction = TroopType.Pilot
             }
-        };
+        });
         
-        relicBoosts.AddRange(dentalPicker);
-        
-        var streetBlocker = new List<Boost> {
+        relicBoosts.AddRange(new List<Boost> {
             new Boost
             {
+                Name = "Street Blocker",
                 BoostType = BoostType.IncreasedMarchingSpeed,
                 BoostAmounts = new List<double> { 0.0, 4.8 },
                 TroopRestriction = TroopType.Hitter
             }
-        };
+        });
         
-        relicBoosts.AddRange(streetBlocker);
+        relicBoosts.AddRange(new List<Boost> {
+            new Boost
+            {
+                Name = "Surgical Knife",
+                BoostType = BoostType.IncreasedAttack,
+                BoostAmounts = new List<double> { 2.0, 3.2 },
+                TroopRestriction = TroopType.Hitter
+            }
+        });
+            
+        relicBoosts.AddRange(new List<Boost> {
+            new Boost
+            {
+                Name = "Street Totem",
+                BoostType = BoostType.IncreasedMarchingSpeed,
+                BoostAmounts = new List<double> { 0.0, 4.8 },
+                TroopRestriction = TroopType.Pilot
+            }
+        });
         
+        relicBoosts.AddRange(new List<Boost> {
+            new Boost
+            {
+                Name = "Street Water Fountain",
+                BoostType = BoostType.IncreasedMarchingSpeed,
+                BoostAmounts = new List<double> { 0.0, 4.8 },
+                TroopRestriction = TroopType.Shooter
+            }
+        });
+        
+        relicBoosts.AddRange(new List<Boost> {
+            new Boost
+            {
+                Name = "Street Light",
+                BoostType = BoostType.IncreasedMarchingSpeed,
+                BoostAmounts = new List<double> { 0.0, 4.8 },
+                TroopRestriction = TroopType.WallBreaker
+            }
+        });
+
+        relicBoosts.AddRange(new List<Boost> {
+            new Boost
+            {
+                Name = "Zombie Stick",
+                BoostType = BoostType.IncreasedHealth,
+                BoostAmounts = new List<double> { 5.0, 10.0 },
+                TroopRestriction = TroopType.Hitter
+            },
+            new Boost
+            {
+                Name = "Zombie Stick",
+                BoostType = BoostType.IncreasedDamageToCounteredUnit,
+                BoostAmounts = new List<double> { 0.0, 20.0 },
+                TroopRestriction = TroopType.Hitter
+            }
+        });
+
+        
+        relicBoosts.AddRange(new List<Boost> {
+            new Boost
+            {
+                Name = "Rage Ball",
+                BoostType = BoostType.IncreasedHealth,
+                BoostAmounts = new List<double> { 5.0, 10.0 },
+                TroopRestriction = TroopType.Shooter
+            },
+            new Boost
+            {
+                Name = "Rage Ball",
+                BoostType = BoostType.IncreasedDamageToCounteredUnit,
+                BoostAmounts = new List<double> { 0.0, 20.0 },
+                TroopRestriction = TroopType.Shooter
+            }
+        });
+
         // TODO: Finish adding relics
         
         #endregion

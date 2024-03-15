@@ -28,10 +28,25 @@ public class Pilot : TalentClass
        destabilize.Boosts.First().DurationSeconds = 2;
             
        destabilize.NextTalent(BoostType.IncreasedDamage, new List<double>{ 3.0, 6.0, 9.0, 12.0, 15.0 }, boostRestrictionType: BoostRestrictionType.FirstTenSecondsOfBattle);
-       throw new NotImplementedException();
+      
         
         // Right tree
-        //rootTalent;
+        var rightTree = rootTalent
+            .NextTalent(BoostType.IncreasedMarchingSpeed, OneAndAHalfPercent)
+            .NextTalent(BoostType.IncreasedMarchingSpeed, FivePercentSteps,
+                boostRestrictionType: BoostRestrictionType.HealthBelowHalf)
+            .NextTalent(BoostType.IncreasedDefence, OnePercent)
+            .NextTalent(BoostType.IncreasedMarchingSpeed, OneAndAHalfPercent)
+            .NextTalent(BoostType.IncreasedHealth, OnePercentSteps)
+            .OptionalTalent(BoostType.IncreasedDefence, OnePercent);
+        
+        var cripplingStrike = rightTree.OptionalTalent(BoostType.ReduceEnemyMarchingSpeed, FivePercentSteps);
+        cripplingStrike.Boosts.First().Chance = 10;
+        cripplingStrike.Boosts.First().DurationSeconds = 2;
+
+        cripplingStrike
+            .NextTalent(BoostType.IncreasedMarchingSpeed, OneAndHalfPercentSteps)
+            .NextTalent(BoostType.TroopsTakeLessSkillDamage, new List<double> { 3.0, 6.0, 9.0, 12.0 });
 
         return rootTalent;
     }

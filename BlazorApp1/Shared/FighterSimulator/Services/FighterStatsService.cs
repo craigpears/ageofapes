@@ -10,32 +10,50 @@ public class FighterStatsService
     protected static Dictionary<string, List<List<Talent>>> _talentTreeCombinationsCache = new Dictionary<string, List<List<Talent>>>();
     protected string _cacheFilesDirectory = @"\\nas-pears\documents\AgeOfApes\FighterOutputs\Cache";
     
-    public List<FighterConfiguration> GetConfigurationsForFighter(Fighter fighter, FightSimulationOptions fightOptions)
+    public List<FighterConfiguration> GetConfigurationsForFighter(Fighter fighter, Fighter? deputyFighter, int selectedDeputyTalent, FightSimulationOptions fightOptions)
     {
         // TODO: Can expand this idea to what's the best combination of research, relics, equipment etc. if they're all standardised into one kind of cost unit
         // TODO: Needs implementing to show best configs of different types by doing battle sims, like best map config, best seige config, best talent leap config, best group fight config
-        Debug.WriteLine($"Getting configurations for {fighter.Name}");
+        Debug.WriteLine($"Getting configurations for {fighter.Name} and {deputyFighter?.Name}-{selectedDeputyTalent}");
         var allTalentCombinations = GetAllPossibleCombinations(fighter, new List<int> { 100 });
         var allConfigurations = new List<FighterConfiguration>();
         
-        var i = 0;
+        Debug.WriteLine($"Calculating army boosts");
 
         foreach (var combination in allTalentCombinations)
         {
-            if (i % 25000 == 0)
+
+            if (deputyFighter != null)
             {
-                Debug.WriteLine($"Calculating army boosts - {i}/{allTalentCombinations.Count}");
+                var deputyTalent = new Talent
+                {
+                    Boosts = new List<Boost>()
+                };
+
+                var passiveFighterSkills =
+                    deputyFighter
+                        .FighterSkills
+                        .Where(x => x.FighterSkillType == FigherSkillType.Passive)
+                        .SelectMany(x => x.Boosts)
+                        .ToList();
+                
+                deputyTalent.Boosts.AddRange(passiveFighterSkills);
+                deputyTalent.Boosts.AddRange(deputyFighter.TalentSkills[selectedDeputyTalent].Boosts);
+                combination.Add(deputyTalent);
             }
+
+            
             
             var config = new FighterConfiguration
             {
                 Fighter = fighter,
+                DeputyFighter = deputyFighter,
+                DeputySelectedTalent = selectedDeputyTalent,
                 SelectedTalents = combination,
                 ArmyBoosts = BuildArmyBoosts(fighter, combination, fightOptions)
             };
             
             allConfigurations.Add(config);
-            i++;
         }
 
         return allConfigurations;
@@ -43,7 +61,15 @@ public class FighterStatsService
 
     public List<List<Talent>> GetAllPossibleCombinations(Fighter fighter, List<int> desiredTalentTotals)
     {
-        // TODO: Cache these results somehow, they take quite a long time
+        var cacheFileName = $"{_cacheFilesDirectory}/{fighter.Name}Combinations.json";
+        
+        if (File.Exists(cacheFileName))
+        {
+            var cachedJson = File.ReadAllText(cacheFileName);
+            var cachedCombinations = JsonSerializer.Deserialize<List<List<Talent>>>(cachedJson);
+            return cachedCombinations;
+        }
+        
         var rootTalents = fighter
             .TalentSkills
             .Select(x => x.TalentTree)
@@ -53,15 +79,14 @@ public class FighterStatsService
 
         foreach (var rootTalent in rootTalents)
         {
-            Debug.WriteLine($"Getting tree combinations for {rootTalent.TalentTreeName}");
             var treeCombinations = GetTreeCombinationsCached(rootTalent);
             combinations.AddRange(treeCombinations);
-            Debug.WriteLine($"{treeCombinations.Count()} tree combinations added");
         }
 
-        Debug.WriteLine($"Getting permutations of all trees");
         var allPermutations = GetAllPermutations(combinations, desiredTalentTotals);
-        Debug.WriteLine($"{allPermutations.Count()} permutations found");
+        
+        var json = JsonSerializer.Serialize(combinations, new JsonSerializerOptions { ReferenceHandler = ReferenceHandler.IgnoreCycles});
+        File.WriteAllText(cacheFileName, json);
 
         return allPermutations;
     }
@@ -71,20 +96,18 @@ public class FighterStatsService
         var cacheFileName = $"{_cacheFilesDirectory}/{rootTalent.TalentTreeName}.json";
         if (_talentTreeCombinationsCache.ContainsKey(rootTalent.TalentTreeName))
         {
-            Debug.WriteLine($"Returning cached tree combinations for {rootTalent.TalentTreeName}");
             return _talentTreeCombinationsCache[rootTalent.TalentTreeName];
         }
         
         if (File.Exists(cacheFileName))
         {
-            Debug.WriteLine($"Loading from disk cached tree combinations for {rootTalent.TalentTreeName}");
             var cachedJson = File.ReadAllText(cacheFileName);
             var cachedCombinations = JsonSerializer.Deserialize<List<List<Talent>>>(cachedJson);
             _talentTreeCombinationsCache[rootTalent.TalentTreeName] = cachedCombinations;
             return cachedCombinations;
         }
         
-        Debug.WriteLine($"No cached tree combinations for {rootTalent.TalentTreeName}, building...");
+        //Debug.WriteLine($"No cached tree combinations for {rootTalent.TalentTreeName}, building...");
         var combinations = GetTreeCombinations(rootTalent);
         _talentTreeCombinationsCache[rootTalent.TalentTreeName] = combinations;
         
@@ -320,6 +343,7 @@ public class FighterStatsService
             BoostRestrictionType.HealthAbove80 => true, // TODO: need to improve this later
             BoostRestrictionType.HealthBelow80 => false, // TODO: need to improve this later
             BoostRestrictionType.FirstFiveSecondsOfBattle => false,
+            BoostRestrictionType.FirstTenSecondsOfBattle => false,
             BoostRestrictionType.FiveSecondsAfterActiveSkillRelease => false,
             BoostRestrictionType.ThreeSecondsAfterHitByActiveSkill => false,
             BoostRestrictionType.TenSecondsAfterLeavingCity => false,
@@ -330,6 +354,12 @@ public class FighterStatsService
             BoostRestrictionType.DefendingAgainstMultipleTroops => false, // TODO: This needs implementing
             BoostRestrictionType.AttackingNeutralUnits => fightOptions.AttackingNeutralUnits,
             BoostRestrictionType.MultipliedByAdjacentAllies => true, // TODO: This needs implementing
+            BoostRestrictionType.TwoSecondsAfterTakingSkillDamage => false, // TODO: This needs implementing
+            BoostRestrictionType.AfterTakingSkillDamage => false, // TODO: This needs implementing
+            BoostRestrictionType.TroopNumberGreaterThanEnemy => true, // TODO: This needs implementing
+            BoostRestrictionType.AfterNormalAttack => false, // TODO: This needs implementing
+            BoostRestrictionType.AfterActiveSkillRelease => false, // TODO: This needs implementing
+            BoostRestrictionType.ThreeSecondsAfterActiveSkillRelease => false, // TODO: This needs implementing
             null => true,
             _ => throw new NotImplementedException()
         };

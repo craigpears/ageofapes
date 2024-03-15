@@ -104,7 +104,7 @@ public class Maximus
                     BoostAmounts = new List<double> { 15 }
                 },
             },
-            TalentTree = Attacker.GetTree()
+            TalentTree = Conqueror.GetTree()
         };
         
         var maskedGladiator = new TalentSkill
@@ -128,7 +128,7 @@ public class Maximus
                     BoostAmounts = new List<double> { -10 }
                 }
             },
-            TalentTree = Leader.GetTree()                                                               
+            TalentTree = Attacker.GetTree()                                                               
         };
         
         var maximus = new Fighter
@@ -141,7 +141,7 @@ public class Maximus
             },
             TalentSkills = new List<TalentSkill>
             {
-                holdTheAdvantage, championOfTheArena
+                holdTheAdvantage, championOfTheArena, maskedGladiator
             }
         };
 

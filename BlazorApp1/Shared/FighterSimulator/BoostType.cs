@@ -45,5 +45,7 @@ public enum BoostType
     SilenceTarget,
     IncreasedDamageFromCounteringUnit,
     CrowdControlShield,
-    ReduceEnemyAttack
+    ReduceEnemyAttack,
+    ReduceEnemyMarchingSpeed,
+    Intimidate
 }

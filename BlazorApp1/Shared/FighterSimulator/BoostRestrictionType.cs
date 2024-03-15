@@ -13,7 +13,7 @@ public enum BoostRestrictionType
     TwoSecondsAfterActiveSkillRelease,
     ThreeSecondsAfterHitByActiveSkill,
     ThreeSecondsAfterActiveSkillRelease,
-    FiveSecondsAfterActiveSkillRelease,
+    FiveSecondsAfterActiveSkillRelease,  // TODO: Use duration property for these variations
     FirstFiveSecondsOfBattle,
     TenSecondsAfterLeavingCity,
     ThreeSecondsAfterHealing,
@@ -27,5 +27,8 @@ public enum BoostRestrictionType
     MultipliedByAdjacentAllies,
     TwoSecondsAfterTakingSkillDamage,
     AfterTakingSkillDamage,
-    FirstTenSecondsOfBattle
+    FirstTenSecondsOfBattle,
+    TroopNumberGreaterThanEnemy,
+    AfterNormalAttack,
+    AfterActiveSkillRelease
 }
