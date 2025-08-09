@@ -1,4 +1,4 @@
-﻿namespace FightSimulator.Core.FighterSimulator.Services;
+﻿namespace FightSimulator.Core.Services;
 
 public class FightSimulationOptions
 {

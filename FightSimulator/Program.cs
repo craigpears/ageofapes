@@ -1,5 +1,5 @@
-﻿using FightSimulator.Core.FighterSimulator.Scenarios;
-using FightSimulator.Core.FighterSimulator.Services;
+﻿using FightSimulator.Core.Scenarios;
+using FightSimulator.Core.Services;
 
 var fightSimulationService = new FightSimulationService();
 var statsService = new FighterStatsService();

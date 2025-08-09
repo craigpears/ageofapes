@@ -1,4 +1,4 @@
-﻿namespace FightSimulator.Core.FighterSimulator.TalentTrees.Type;
+﻿namespace FightSimulator.Core.TalentTrees.Type;
 
 public class Support : TalentClass
 {

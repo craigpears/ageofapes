@@ -1,4 +1,4 @@
-﻿namespace FightSimulator.Core.FighterSimulator.Extensions;
+﻿namespace FightSimulator.Core.Extensions;
 
 public static class DoubleExtensions
 {

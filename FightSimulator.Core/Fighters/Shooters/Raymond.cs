@@ -1,8 +1,8 @@
-﻿using FightSimulator.Core.FighterSimulator.TalentTrees.Applications;
-using FightSimulator.Core.FighterSimulator.TalentTrees.Type;
-using FightSimulator.Core.FighterSimulator.TalentTrees.Unit;
+﻿using FightSimulator.Core.TalentTrees.Applications;
+using FightSimulator.Core.TalentTrees.Type;
+using FightSimulator.Core.TalentTrees.Unit;
 
-namespace FightSimulator.Core.FighterSimulator.Fighters.Shooters;
+namespace FightSimulator.Core.Fighters.Shooters;
 
 public class Raymond
 {

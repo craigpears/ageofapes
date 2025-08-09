@@ -1,8 +1,8 @@
-﻿using FightSimulator.Core.FighterSimulator.Extensions;
-using FightSimulator.Core.FighterSimulator.Fighters;
-using FightSimulator.Core.FighterSimulator.Scenarios;
+﻿using FightSimulator.Core.Extensions;
+using FightSimulator.Core.Fighters;
+using FightSimulator.Core.Scenarios;
 
-namespace FightSimulator.Core.FighterSimulator.Services;
+namespace FightSimulator.Core.Services;
 
 public class FightSimulationService
 {

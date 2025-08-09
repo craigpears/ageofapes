@@ -1,7 +1,7 @@
-﻿using FightSimulator.Core.FighterSimulator.Fighters;
-using FightSimulator.Core.FighterSimulator.Services;
+﻿using FightSimulator.Core.Fighters;
+using FightSimulator.Core.Services;
 
-namespace FightSimulator.Core.FighterSimulator.Scenarios;
+namespace FightSimulator.Core.Scenarios;
 
 public class MapVersusShooters : FightScenario
 {

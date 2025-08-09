@@ -1,4 +1,4 @@
-﻿namespace FightSimulator.Core.FighterSimulator;
+﻿namespace FightSimulator.Core;
 
 public class ArmyBoosts
 {

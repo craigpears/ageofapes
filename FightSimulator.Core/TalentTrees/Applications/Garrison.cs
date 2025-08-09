@@ -1,4 +1,4 @@
-﻿namespace FightSimulator.Core.FighterSimulator.TalentTrees.Applications;
+﻿namespace FightSimulator.Core.TalentTrees.Applications;
 
 public class Garrison : TalentClass
 {

@@ -1,6 +1,6 @@
-﻿using FightSimulator.Core.FighterSimulator.Services;
+﻿using FightSimulator.Core.Services;
 
-namespace FightSimulator.Core.FighterSimulator.Scenarios;
+namespace FightSimulator.Core.Scenarios;
 
 public class SimpleCityAttack : FightScenario
 {

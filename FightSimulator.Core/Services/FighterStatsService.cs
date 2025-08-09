@@ -1,8 +1,8 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using FightSimulator.Core.FighterSimulator.Boosts;
+using FightSimulator.Core.Boosts;
 
-namespace FightSimulator.Core.FighterSimulator.Services;
+namespace FightSimulator.Core.Services;
 
 public class FighterStatsService
 {

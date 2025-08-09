@@ -1,9 +1,10 @@
 ﻿using System.Text;
-using FightSimulator.Core.FighterSimulator.Extensions;
-using FightSimulator.Core.FighterSimulator.Fighters;
-using FightSimulator.Core.FighterSimulator.Services;
+using System.Text.Json;
+using FightSimulator.Core.Extensions;
+using FightSimulator.Core.Fighters;
+using FightSimulator.Core.Services;
 
-namespace FightSimulator.Core.FighterSimulator.Scenarios;
+namespace FightSimulator.Core.Scenarios;
 
 public abstract class FightScenario
 {
@@ -138,7 +139,7 @@ public abstract class FightScenario
             var fighterConfig = bestResult.YourArmy.FighterConfiguration;
             var fighterSelectedTalents = fighterConfig.SelectedTalents;
 
-            var talentsJson = JsonConvert.SerializeObject(fighterSelectedTalents);
+            var talentsJson = JsonSerializer.Serialize(fighterSelectedTalents);
             File.WriteAllText($"{outputPath}//{fighterConfig.Fighter.Name}_{fighterConfig.DeputyFighter?.Name}.bestConfig.txt", talentsJson);
         }
 

@@ -1,9 +1,9 @@
-﻿using FightSimulator.Core.FighterSimulator.Fighters.Gatherers;
-using FightSimulator.Core.FighterSimulator.Fighters.Leaders;
-using FightSimulator.Core.FighterSimulator.Fighters.Pilots;
-using FightSimulator.Core.FighterSimulator.Fighters.Shooters;
+﻿using FightSimulator.Core.Fighters.Gatherers;
+using FightSimulator.Core.Fighters.Leaders;
+using FightSimulator.Core.Fighters.Pilots;
+using FightSimulator.Core.Fighters.Shooters;
 
-namespace FightSimulator.Core.FighterSimulator.Fighters;
+namespace FightSimulator.Core.Fighters;
 
 public class FightersRepository
 {

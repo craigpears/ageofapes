@@ -1,4 +1,4 @@
-﻿namespace FightSimulator.Core.FighterSimulator.Fighters;
+﻿namespace FightSimulator.Core.Fighters;
 
 public class RunOptions
 {

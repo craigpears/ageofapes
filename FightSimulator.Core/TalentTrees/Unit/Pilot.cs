@@ -1,4 +1,4 @@
-﻿namespace FightSimulator.Core.FighterSimulator.TalentTrees.Unit;
+﻿namespace FightSimulator.Core.TalentTrees.Unit;
 
 public class Pilot : TalentClass
 {

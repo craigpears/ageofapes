@@ -1,4 +1,4 @@
-﻿namespace FightSimulator.Core.FighterSimulator.TalentTrees;
+﻿namespace FightSimulator.Core.TalentTrees;
 
 public abstract class TalentClass
 {

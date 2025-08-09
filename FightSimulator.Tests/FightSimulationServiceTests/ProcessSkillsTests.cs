@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Xml.Schema;
-using FightSimulator.Core.FighterSimulator;
-using FightSimulator.Core.FighterSimulator.Services;
+using FightSimulator.Core;
+using FightSimulator.Core.Services;
 using Newtonsoft.Json;
 
 namespace Tests.FightSimulationServiceTests;

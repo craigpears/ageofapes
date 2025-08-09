@@ -1,7 +1,7 @@
-using FightSimulator.Core.FighterSimulator.TalentTrees.Type;
-using FightSimulator.Core.FighterSimulator.TalentTrees.Unit;
+using FightSimulator.Core.TalentTrees.Type;
+using FightSimulator.Core.TalentTrees.Unit;
 
-namespace FightSimulator.Core.FighterSimulator.Fighters.Pilots;
+namespace FightSimulator.Core.Fighters.Pilots;
 
 public class Darcy
 {
