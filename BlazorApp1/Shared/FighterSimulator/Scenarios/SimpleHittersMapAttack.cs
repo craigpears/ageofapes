@@ -2,10 +2,9 @@
 
 public class SimpleHittersMapAttack : FightScenario
 {
-    public SimpleHittersMapAttack() : base("HittersMapAttackResults", new FightSimulationOptions()
-    {
-        MapBattle = true
-    }) {}
+    public SimpleHittersMapAttack() : base("HittersMapAttackResults", new FightSimulationOptions(
+        ApplicabilityGroup.MapBattle
+    )) {}
     
     public virtual Func<Army, Army, Army> EnemyArmyFunc(FighterConfiguration configuration) =>
         (Army currentArmy, Army enemyArmy) => new Army

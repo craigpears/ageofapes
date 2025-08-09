@@ -2,9 +2,8 @@
 
 public class SimpleDefence : FightScenario
 {
-    public SimpleDefence() : base("DefensiveFightResults", new FightSimulationOptions()
-    {
-        Garrison = true
-    }) {}
+    public SimpleDefence() : base("DefensiveFightResults", new FightSimulationOptions(
+        ApplicabilityGroup.Garrison
+    )) {}
     
 }

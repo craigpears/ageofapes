@@ -30,5 +30,9 @@ public enum BoostRestrictionType
     FirstTenSecondsOfBattle,
     TroopNumberGreaterThanEnemy,
     AfterNormalAttack,
-    AfterActiveSkillRelease
+    AfterActiveSkillRelease,
+    NotDisguised,
+    HealthBelow70,
+    AttackedByMultipleEnemies,
+    AgainstRallys,
 }

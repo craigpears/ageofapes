@@ -2,10 +2,9 @@
 
 public class MapVersusPilots : FightScenario
 {
-    public MapVersusPilots() : base("MapVersusPilotsResults", new FightSimulationOptions()
-    {
-        MapBattle = true
-    }) {}
+    public MapVersusPilots() : base("MapVersusPilotsResults", new FightSimulationOptions(
+        ApplicabilityGroup.MapBattle
+    )) {}
     
     public override Func<Army, Army, Army> EnemyArmyFunc(FighterConfiguration configuration)=>
         (Army currentArmy, Army enemyArmy) => new Army

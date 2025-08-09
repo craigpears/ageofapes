@@ -2,13 +2,13 @@
 
 public class CannonAttack : FightScenario
 {
-    public CannonAttack() : base("CannonResults", new FightSimulationOptions()
+    public CannonAttack() : base("CannonResults", new FightSimulationOptions(
+            ApplicabilityGroup.Siege
+        )
     {
-        Seige = true,
         UseCannons = true,
     })
     {
-        EnemyBoostMultiplier = 4.0;
     }
 
     public override Func<Army, Army, Army> YourArmyFunc(FighterConfiguration configuration) =>
@@ -20,7 +20,7 @@ public class CannonAttack : FightScenario
             {
                 new()
                 {
-                    Count = (int)(100000 * configuration.ArmyBoosts.MaxTroopsMultiplier),
+                    Count = (int)(150000 * configuration.ArmyBoosts.MaxTroopsMultiplier),
                     TroopType = TroopType.WallBreaker, GearLevel = 5, TroopLevel = 5
                 }
             }

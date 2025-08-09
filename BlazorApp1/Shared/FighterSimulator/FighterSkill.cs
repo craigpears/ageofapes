@@ -13,4 +13,6 @@ public class FighterSkill
     public int AdditionalDamageChance { get; set; }
     public int AdditionalDamageFactor { get; set; }
     public int Chance { get; set; }
+    public int ShieldFactor { get; set; }
+    public int AdditionalShieldFactor { get; set; }
 }

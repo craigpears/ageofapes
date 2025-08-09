@@ -2,21 +2,27 @@
 
 namespace BlazorApp1.Shared.FighterSimulator.Fighters.Shooters;
 
-public class Carina
+public class ClarkBrothers
 {
     public static Fighter GetFighter()
     {
-
         var activeSkill = new FighterSkill
         {
             FighterSkillType = FigherSkillType.Active,
             RageRequired = 1000,
-            DamageFactor = 1600,
+            DamageFactor = 550,
+            MaxTargets = 3,
             Boosts = new List<Boost>
             {
                 new Boost
                 {
-                    BoostType = BoostType.ReduceEnemyDefence,
+                    BoostType = BoostType.DamageTakenReduced,
+                    BoostRestrictionType = BoostRestrictionType.ThreeSecondsAfterActiveSkillRelease,
+                    BoostAmounts = new List<double> { -10 }
+                },
+                new Boost
+                {
+                    BoostType = BoostType.IncreasedDamage,
                     BoostRestrictionType = BoostRestrictionType.ThreeSecondsAfterActiveSkillRelease,
                     BoostAmounts = new List<double> { 20 }
                 },
@@ -26,21 +32,25 @@ public class Carina
         var passiveSkill = new FighterSkill
         {
             FighterSkillType = FigherSkillType.Passive,
-            DamageFactor = 300,
-            Chance = 10,
             Boosts = new List<Boost>
             {
                 new Boost
                 {
                     BoostType = BoostType.IncreasedAttack,
                     TroopRestriction = TroopType.Shooter,
-                    BoostAmounts = new List<double> { 30 }
+                    BoostAmounts = new List<double> { 25 }
                 },
                 new Boost
                 {
-                    BoostType = BoostType.ReduceEnemyHealing,
-                    BoostAmounts = new List<double> { 20 },
-                    Chance = 10
+                    BoostType = BoostType.DamageTakenReduced,
+                    BoostRestrictionType = BoostRestrictionType.NotDisguised,
+                    BoostAmounts = new List<double> { 20 }
+                },
+                new Boost
+                {
+                    BoostType = BoostType.IncreasedNormalAttackDamage,
+                    BoostRestrictionType = BoostRestrictionType.NotDisguised,
+                    BoostAmounts = new List<double> { -20 }
                 },
             }
         };
@@ -54,13 +64,13 @@ public class Carina
                 {
                     BoostType = BoostType.IncreasedDefence,
                     TroopRestriction = TroopType.Shooter,
-                    BoostAmounts = new List<double> { 30 }
+                    BoostAmounts = new List<double> { 25 }
                 },
                 new Boost
                 {
-                    BoostType = BoostType.IncreasedDamage,
-                    BoostAmounts = new List<double> { 3 },
-                    BoostRestrictionType = BoostRestrictionType.MultipliedByAdjacentAllies // TODO: Needs Implementing
+                    BoostType = BoostType.IncreasedAttack,
+                    BoostAmounts = new List<double> { 10 },
+                    BoostRestrictionType = BoostRestrictionType.HealthBelow70
                 },
             }
         };
@@ -74,20 +84,19 @@ public class Carina
                 {
                     BoostType = BoostType.IncreasedHealth,
                     TroopRestriction = TroopType.Shooter,
-                    BoostAmounts = new List<double> { 15 }
+                    BoostAmounts = new List<double> { 20 }
                 },
                 new Boost
                 {
-                    BoostType = BoostType.IncreasedAttack,
-                    TroopRestriction = TroopType.Shooter,
-                    BoostAmounts = new List<double> { 40 },
-                    BoostRestrictionType = BoostRestrictionType.HealthAbove70
+                    BoostType = BoostType.ReducedDamageFromNormalAttacks,
+                    BoostAmounts = new List<double> { 5 },
+                    BoostRestrictionType = BoostRestrictionType.DefendingAgainstMultipleTroops
                 },
                 new Boost
                 {
-                    BoostType = BoostType.IncreasedDefence,
-                    TroopRestriction = TroopType.Shooter,
-                    BoostAmounts = new List<double> { -10 }
+                    BoostType = BoostType.CrowdControlShield,
+                    BoostAmounts = new List<double> { 1 },
+                    Chance = 10
                 },
             }
         };
@@ -101,13 +110,16 @@ public class Carina
                 {
                     BoostType = BoostType.IncreasedAttack,
                     TroopRestriction = TroopType.Shooter,
-                    BoostAmounts = new List<double> { 20 }
+                    BoostAmounts = new List<double> { 30 },
+                    BoostRestrictionType = BoostRestrictionType.HealthAbove70
                 },
                 new Boost
                 {
-                    BoostType = BoostType.IncreasedDamageToCounteredUnit,
+                    BoostType = BoostType.IncreasedNormalAttackDamage,
                     TroopRestriction = TroopType.Shooter,
-                    BoostAmounts = new List<double> { 5 }
+                    BoostAmounts = new List<double> { 30 },
+                    Chance = 10,
+                    DurationSeconds = 3
                 },
             },
             TalentTree = Shooter.GetTree()
@@ -123,30 +135,25 @@ public class Carina
                 new Boost
                 {
                     BoostType = BoostType.IncreasedAttack,
-                    BoostRestrictionType = BoostRestrictionType.MapBattle,
-                    BoostAmounts = new List<double> { 10 }
-                },
-                new Boost
-                {
-                    BoostType = BoostType.IncreasedMarchingSpeed,
-                    BoostRestrictionType = BoostRestrictionType.MapBattle,
+                    BoostRestrictionType = BoostRestrictionType.SeigeMode,
                     BoostAmounts = new List<double> { 20 }
                 },
                 new Boost
                 {
-                    BoostType = BoostType.IncreasedSkillDamage,
-                    BoostRestrictionType = BoostRestrictionType.HealthBelowHalf,
-                    BoostAmounts = new List<double> { 10 }
+                    BoostType = BoostType.IncreasedDefence,
+                    BoostRestrictionType = BoostRestrictionType.SeigeMode,
+                    BoostAmounts = new List<double> { 30 },
+                    Chance = 10,
+                    DurationSeconds = 3
                 },
-                
                 new Boost
                 {
-                    BoostType = BoostType.IncreasedSkillDamage,
-                    BoostRestrictionType = BoostRestrictionType.HealthBelowHalf,
-                    BoostAmounts = new List<double> { 10 }
+                    BoostType = BoostType.ConvertDefeatedToSeriouslyWounded,
+                    BoostRestrictionType = BoostRestrictionType.SeigeMode,
+                    BoostAmounts = new List<double> { 5 }
                 },
             },
-            TalentTree = Balanced.GetTree()
+            TalentTree = Conqueror.GetTree()
         };
 
         var tallentSkill3 = new TalentSkill
@@ -156,14 +163,16 @@ public class Carina
             {
                 new Boost
                 {
-                    BoostType = BoostType.IncreasedSkillDamage,
-                    BoostAmounts = new List<double> { 10 }
+                    // TODO: This needs implementing
+                    BoostType = BoostType.IncreasedActiveSkillDuration,
+                    BoostAmounts = new List<double> { 1 },
+                    Chance = 30
                 },
                 new Boost
                 {
                     BoostType = BoostType.IncreasedAttack,
-                    BoostAmounts = new List<double> { 15 },
-                    BoostRestrictionType = BoostRestrictionType.TwoSecondsAfterActiveSkillRelease
+                    BoostAmounts = new List<double> { 30 },
+                    DurationSeconds = 3
                 },
             },
             TalentTree = Skill.GetTree()
@@ -173,7 +182,7 @@ public class Carina
 
         var fighter = new Fighter
         {
-            Name = "Carina",
+            Name = "Clark Brothers",
             CanTalentLeap = true,
             FighterSkills = new List<FighterSkill>
             {

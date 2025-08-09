@@ -6,17 +6,25 @@ public class Troop
     public void CalculateStats(ArmyBoosts armyBoosts, bool addCounterDamage)
     {
         var boosts = armyBoosts.UnitBoosts.SingleOrDefault(x => x.TroopType == TroopType);
+
+        var attackBoostPercent = boosts?.AttackBoostPercent ?? 0;
+        var defenceBoostPercent = boosts?.DefenceBoostPercent ?? 0;
+        var healthBoostPercent = boosts?.HealthBoostPercent ?? 0;
+
+        var attackMultiplier = 1 + (attackBoostPercent / 100);
+        var defenceMultiplier = 1 + (defenceBoostPercent / 100);
+        var healthMultiplier = 1 + (healthBoostPercent / 100);
         
-        CalculatedAttack = Attack * ((boosts?.AttackBoostPercent ?? 1) / 100);
-        CalculatedDefence = Defence * ((boosts?.DefenceBoostPercent ?? 1) / 100);
-        CalculatedHealth = Health * ((boosts?.HealthBoostPercent ?? 1) / 100);
-        CalculatedDamageBoost = addCounterDamage ? boosts?.Counter ?? 1 : 1;
+        CalculatedAttack = (int)(Attack * attackMultiplier);
+        CalculatedDefence = (int)(Defence * defenceMultiplier);
+        CalculatedHealth = (int)(Health * healthMultiplier);
+        CalculatedCounterDamageBoost = (int)(addCounterDamage ? boosts?.Counter ?? 0 : 0);
     }
     
-    public double CalculatedAttack { get; set; }
-    public double CalculatedDefence { get; set; }
-    public double CalculatedHealth { get; set; }
-    public double CalculatedDamageBoost { get; set; }
+    public int CalculatedAttack { get; set; }
+    public int CalculatedDefence { get; set; }
+    public int CalculatedHealth { get; set; }
+    public int CalculatedCounterDamageBoost { get; set; }
     
     public TroopType TroopType { get; set; }
     public int TroopLevel { get; set; }

@@ -24,16 +24,16 @@ public class FighterStatsServiceTests : TalentClass
         var sut = new FighterStatsService();
         var combinations = sut.GetTreeCombinations(talentTree);
         
-        Assert.AreEqual(4, combinations.Count());
+        Assert.That(combinations.Count(), Is.EqualTo(4));
         
         // One should be just the root talent on its own
         Assert.True(combinations.Any(x => x.Count == 1 && x.Contains(talentTree)));
 
         // One should have all three
-        Assert.AreEqual(1, combinations.Count(x => x.Count == 3));
+        Assert.That(combinations.Count(x => x.Count == 3), Is.EqualTo(1));
         
         // The remaining two should have the root and one of the leaf nodes
-        Assert.AreEqual(2, combinations.Count(x => x.Count == 2));
+        Assert.That(combinations.Count(x => x.Count == 2), Is.EqualTo(2));
 
     }
 
@@ -55,10 +55,10 @@ public class FighterStatsServiceTests : TalentClass
         Assert.AreEqual(6, combinations.Count());
         
         Assert.True(combinations.Any(x => x.Count == 1 && x.Contains(talentTree)));
-        Assert.AreEqual(1, combinations.Count(x => x.Count == 4));
-        Assert.AreEqual(2, combinations.Count(x => x.Count == 3));
-        Assert.AreEqual(2, combinations.Count(x => x.Count == 2));
-        Assert.AreEqual(1, combinations.Count(x => x.Count == 1));
+        Assert.That(combinations.Count(x => x.Count == 4), Is.EqualTo(1));
+        Assert.That(combinations.Count(x => x.Count == 3), Is.EqualTo(2));
+        Assert.That(combinations.Count(x => x.Count == 2), Is.EqualTo(2));
+        Assert.That(combinations.Count(x => x.Count == 1), Is.EqualTo(1));
     }
 
     [Test]

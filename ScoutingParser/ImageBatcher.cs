@@ -37,7 +37,7 @@ public class ImageBatcher
             .Where(f => !f.Attributes.HasFlag(FileAttributes.Hidden))   
             .ToList();
         
-        var chunkSize = 50;
+        var chunkSize = 3;
         var batches = croppedImagesToProcess.Select((x, i) => new { Index = i, Value = x })
             .GroupBy(x => x.Index / chunkSize)
             .Select(x => x.Select(v => v.Value).ToList())

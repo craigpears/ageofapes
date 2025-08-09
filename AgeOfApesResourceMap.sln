@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScoutingParser", "ScoutingP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{057C7794-B54E-4FE8-8CEC-30997D80DC42}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FightSimulator", "FightSimulator\FightSimulator.csproj", "{DFF11067-7235-48C6-B324-7691FBDC853B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{057C7794-B54E-4FE8-8CEC-30997D80DC42}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{057C7794-B54E-4FE8-8CEC-30997D80DC42}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{057C7794-B54E-4FE8-8CEC-30997D80DC42}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFF11067-7235-48C6-B324-7691FBDC853B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFF11067-7235-48C6-B324-7691FBDC853B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFF11067-7235-48C6-B324-7691FBDC853B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFF11067-7235-48C6-B324-7691FBDC853B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

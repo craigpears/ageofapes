@@ -2,6 +2,15 @@
 
 public class UnitBoosts
 {
+    public UnitBoosts()
+    {
+    }
+
+    public UnitBoosts(TroopType troopType)
+    {
+        TroopType = troopType;
+    }
+
     public double? AttackBoostPercent { get; set; }
     public double? DefenceBoostPercent { get; set; }
     public double? HealthBoostPercent { get; set; }

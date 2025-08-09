@@ -2,9 +2,8 @@
 
 public class SimpleCityAttack : FightScenario
 {
-    public SimpleCityAttack() : base("DirectCityAttackResults", new FightSimulationOptions()
-    {
-        Seige = true
-    }) {}
+    public SimpleCityAttack() : base("DirectCityAttackResults", new FightSimulationOptions(
+        ApplicabilityGroup.Siege
+        )) {}
     
 }

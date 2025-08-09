@@ -1,12 +1,12 @@
 ﻿namespace BlazorApp1.Shared.FighterSimulator.Scenarios;
 
-public class ShooterUnitSkill : FightScenario
+public class MapWallBreakers : FightScenario
 {
-    public ShooterUnitSkill() : base("ShooterUnitSkillResults", new FightSimulationOptions(
-        ApplicabilityGroup.MapBattle)
+    public MapWallBreakers() : base("MapWallBreakers", new FightSimulationOptions(
+        ApplicabilityGroup.MapBattle))
     {
-        UseShooterUnitSkill = true
-    }) {}
+        
+    }
 
     public override Func<Army, Army, Army> YourArmyFunc(FighterConfiguration configuration) =>
         (Army currentArmy, Army enemyArmy) => new Army
@@ -17,8 +17,8 @@ public class ShooterUnitSkill : FightScenario
             {
                 new()
                 {
-                    Count = (int)(100000 * configuration.ArmyBoosts.MaxTroopsMultiplier), TroopType = TroopType.Shooter,
-                    GearLevel = 5, TroopLevel = 5
+                    Count = (int)(300000 * configuration.ArmyBoosts.MaxTroopsMultiplier),
+                    TroopType = TroopType.WallBreaker, GearLevel = 5, TroopLevel = 5
                 }
             }
         };

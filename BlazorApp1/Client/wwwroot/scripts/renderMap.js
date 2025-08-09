@@ -76,7 +76,7 @@
         ctx.font = "30px Arial";
         ctx.fillStyle = "white";
 
-        if(lootingLocation.regionRank < 15)
+        if(lootingLocation.regionRank < 5)
         {
             ctx.globalAlpha = 1.0;
             var logText = resourcesMillionsText + "M," + lootingLocation.playerName + "[" + lootingLocation.daysSinceScouted + "]" + "("+lootingLocation.xCoordinates + "," + lootingLocation.yCoordinates+")";

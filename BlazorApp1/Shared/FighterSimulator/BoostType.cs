@@ -47,5 +47,8 @@ public enum BoostType
     CrowdControlShield,
     ReduceEnemyAttack,
     ReduceEnemyMarchingSpeed,
-    Intimidate
+    Intimidate,
+    IncreasedActiveSkillDuration,
+    ReflectTargetSkillDamage,
+    ReduceEnemyRageOnNormalAttack
 }

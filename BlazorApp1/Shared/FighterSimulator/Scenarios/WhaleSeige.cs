@@ -2,10 +2,9 @@
 
 public class WhaleSeige : FightScenario
 {
-    public WhaleSeige() : base("WhaleCityAttackResults", new FightSimulationOptions()
-    {
-        Garrison = true
-    }) {}
+    public WhaleSeige() : base("WhaleCityAttackResults", 
+            new FightSimulationOptions(ApplicabilityGroup.Garrison)
+        ) {}
     
     public override Func<Army, Army, Army> EnemyArmyFunc(FighterConfiguration configuration) =>
             (Army currentArmy, Army enemyArmy) =>

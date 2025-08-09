@@ -8,7 +8,7 @@ public static class AttackResultExtensions
             .OrderByDescending(x => x.TotalEnemyLostTroops)
             .ThenByDescending(x => x.YourRemainingTroops)
             .ThenBy(x => x.NumberOfRounds)
-            .ThenByDescending(x => x.AttackLogs.Max(a => a.YourDamage))
+            .ThenByDescending(x => x.AttackLogs.Max(a => a.YourNormalDamage))
             .First();
 
         return bestResult;

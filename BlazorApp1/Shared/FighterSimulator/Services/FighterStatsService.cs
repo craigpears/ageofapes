@@ -8,18 +8,16 @@ namespace BlazorApp1.Shared.FighterSimulator;
 public class FighterStatsService
 {
     protected static Dictionary<string, List<List<Talent>>> _talentTreeCombinationsCache = new Dictionary<string, List<List<Talent>>>();
+    protected static Dictionary<string, List<List<Talent>>> _allCombinationsCache = new Dictionary<string, List<List<Talent>>>();
     protected string _cacheFilesDirectory = @"\\nas-pears\documents\AgeOfApes\FighterOutputs\Cache";
     
     public List<FighterConfiguration> GetConfigurationsForFighter(Fighter fighter, Fighter? deputyFighter, int selectedDeputyTalent, FightSimulationOptions fightOptions)
     {
         // TODO: Can expand this idea to what's the best combination of research, relics, equipment etc. if they're all standardised into one kind of cost unit
         // TODO: Needs implementing to show best configs of different types by doing battle sims, like best map config, best seige config, best talent leap config, best group fight config
-        Debug.WriteLine($"Getting configurations for {fighter.Name} and {deputyFighter?.Name}-{selectedDeputyTalent}");
         var allTalentCombinations = GetAllPossibleCombinations(fighter, new List<int> { 100 });
         var allConfigurations = new List<FighterConfiguration>();
         
-        Debug.WriteLine($"Calculating army boosts");
-
         foreach (var combination in allTalentCombinations)
         {
 
@@ -39,34 +37,79 @@ public class FighterStatsService
                 
                 deputyTalent.Boosts.AddRange(passiveFighterSkills);
                 deputyTalent.Boosts.AddRange(deputyFighter.TalentSkills[selectedDeputyTalent].Boosts);
+                deputyTalent.Boosts.ForEach(x => x.Source = "Deputy");
+                
                 combination.Add(deputyTalent);
             }
 
-            
-            
             var config = new FighterConfiguration
             {
                 Fighter = fighter,
                 DeputyFighter = deputyFighter,
                 DeputySelectedTalent = selectedDeputyTalent,
                 SelectedTalents = combination,
+                // TODO: Improve this so that fight options and deputy fighters can be applied in later steps, then this can be cached
                 ArmyBoosts = BuildArmyBoosts(fighter, combination, fightOptions)
             };
             
             allConfigurations.Add(config);
         }
 
-        return allConfigurations;
+        var distinctConfigurations = GetDistinctConfigurations(allConfigurations);
+
+        return distinctConfigurations;
+    }
+
+    private List<FighterConfiguration> GetDistinctConfigurations(List<FighterConfiguration> allConfigurations)
+    {
+        var distinctConfigurations = new List<FighterConfiguration>();
+        var configurationsByTalentBreakdown = allConfigurations.GroupBy(x => x.TalentBreakdown);
+
+        
+        foreach (var group in configurationsByTalentBreakdown)
+        {
+            var distinctWithinGroup = new List<FighterConfiguration>();
+
+            foreach (var config in group.ToList())
+            {
+                var alreadyExists = false;
+                foreach (var distinctExisting in distinctWithinGroup)
+                {
+                    var differences = config.ArmyBoosts.BoostsByType.Except(distinctExisting.ArmyBoosts.BoostsByType, BoostGrouping.BoostGroupingComparer);
+                    if (!differences.Any())
+                    {
+                        alreadyExists = true;
+                        break;
+                    }
+                }
+                
+                if(!alreadyExists)
+                    distinctWithinGroup.Add(config);
+            }
+            
+            distinctConfigurations.AddRange(distinctWithinGroup);
+        }
+        
+        return distinctConfigurations;
     }
 
     public List<List<Talent>> GetAllPossibleCombinations(Fighter fighter, List<int> desiredTalentTotals)
     {
         var cacheFileName = $"{_cacheFilesDirectory}/{fighter.Name}Combinations.json";
+
+        if (_allCombinationsCache.ContainsKey(fighter.Name))
+        {
+            return _allCombinationsCache[fighter.Name];
+        }
         
         if (File.Exists(cacheFileName))
         {
             var cachedJson = File.ReadAllText(cacheFileName);
             var cachedCombinations = JsonSerializer.Deserialize<List<List<Talent>>>(cachedJson);
+            
+            if (_allCombinationsCache.Count < 10)
+                _allCombinationsCache[fighter.Name] = cachedCombinations;
+            
             return cachedCombinations;
         }
         
@@ -85,8 +128,11 @@ public class FighterStatsService
 
         var allPermutations = GetAllPermutations(combinations, desiredTalentTotals);
         
-        var json = JsonSerializer.Serialize(combinations, new JsonSerializerOptions { ReferenceHandler = ReferenceHandler.IgnoreCycles});
+        var json = JsonSerializer.Serialize(allPermutations, new JsonSerializerOptions { ReferenceHandler = ReferenceHandler.IgnoreCycles});
         File.WriteAllText(cacheFileName, json);
+        
+        if (_allCombinationsCache.Count < 10)
+            _allCombinationsCache[fighter.Name] = allPermutations;
 
         return allPermutations;
     }
@@ -107,11 +153,16 @@ public class FighterStatsService
             return cachedCombinations;
         }
         
-        //Debug.WriteLine($"No cached tree combinations for {rootTalent.TalentTreeName}, building...");
         var combinations = GetTreeCombinations(rootTalent);
+        combinations
+            .ForEach(x => x
+            .ForEach(t =>
+                t.Boosts.ForEach(b => b.Source = rootTalent.TalentTreeName)
+            ));
+        
         _talentTreeCombinationsCache[rootTalent.TalentTreeName] = combinations;
         
-        // Remove these large links before serialising
+        // Remove these large links before serialising, they aren't needed anymore.  Should probably have two different models for building and returning.
         combinations.ForEach(x => x.ForEach(t =>
         {
             t.RootTalent = null;
@@ -256,26 +307,125 @@ public class FighterStatsService
 
     public ArmyBoosts BuildArmyBoosts(Fighter fighter, List<Talent> selectedTalents, FightSimulationOptions fightOptions)
     {
-        selectedTalents
-            .SelectMany(x => x.Boosts)
-            .ToList()
-            .ForEach(x => x.Source = "Talent");
+        AddFighterSkillBoosts(fighter, selectedTalents, fightOptions);
+        AddFighterTalentSkillBoosts(fighter, selectedTalents);
+        AddOtherBoosts(selectedTalents);
 
+        // TODO: Implement increased rage talents/boosts
+        
+        var boosts = selectedTalents
+            .SelectMany(x => x.Boosts)
+            .ToList();
+        
+        boosts.ForEach(x => x.ApplicabilityGroup = GetApplicabilityGroup(x));
+        
+        var applicableBoosts = boosts.Where(x => IsApplicableBoost(x, fightOptions)).ToList();
+        var boostsByType = GroupBoostsByType(applicableBoosts);
+        var unitBoosts = GroupBoostsByTroopRestriction(fightOptions, boostsByType);
+
+        // TODO: Use ApplicabilityGroup below here, return a function from GetStatBoosts that takes in fightOptions to finalise the stats
+        var armyBoosts = new ArmyBoosts
+        {
+            UnitBoosts = new List<UnitBoosts>
+            {
+                GetUnitBoosts(unitBoosts, TroopType.Hitter), 
+                GetUnitBoosts(unitBoosts, TroopType.Pilot),
+                GetUnitBoosts(unitBoosts, TroopType.Shooter),
+                GetUnitBoosts(unitBoosts, TroopType.WallBreaker)
+            },
+            DamageDealtByNormalAttacks = GetStatBoosts(boostsByType, x => x.BoostType is BoostType.IncreasedNormalAttackDamage),
+            DamageDealtBySkillsPercentIncrease = GetStatBoosts(boostsByType, x => x.BoostType is BoostType.IncreasedSkillDamage),
+            DamageDealtByCounterAttacks = GetStatBoosts(boostsByType, x => x.BoostType is BoostType.IncreasedCounterAttackDamage),
+            IncreasedMaxTroopsPercent = boostsByType.Where(x => x.BoostType == BoostType.IncreasedMaxTroops).Sum(x => x.TotalMaxBoostAmount),
+            ApplicableBoosts = applicableBoosts,
+            PassiveSkills = boostsByType.FirstOrDefault(x => x.BoostType == BoostType.SkillDamageFactor)?.Boosts ?? new List<Boost>(),
+            BoostsByType = boostsByType
+        };
+
+        return armyBoosts;
+    }
+
+    private static List<BoostGrouping> GroupBoostsByTroopRestriction(FightSimulationOptions fightOptions, List<BoostGrouping> boostGroupings)
+    {
+        var unitBoosts = boostGroupings.Where(x =>
+            x.BoostType 
+                is BoostType.IncreasedAttack 
+                or BoostType.IncreasedDefence 
+                or BoostType.IncreasedHealth
+                or BoostType.IncreasedDamage 
+                or BoostType.IncreasedDamageToCounteredUnit)
+            .SelectMany(x => x.Boosts);
+        
+        var groupedBoosts = unitBoosts
+            .Where(x => 
+                !(
+                    x.TroopRestriction == TroopType.ThreeUnitTypes
+                    && (fightOptions.UseCannons || fightOptions.UseShooterUnitSkill)
+                )
+            )
+            .GroupBy(x => new BoostGrouping
+            {
+                BoostType = x.BoostType,
+                TroopRestriction = x.TroopRestriction
+            })
+            .Select(x => new BoostGrouping
+            {
+                BoostType = x.Key.BoostType,
+                TroopRestriction = x.Key.TroopRestriction,
+                Boosts = x.ToList()
+            }).ToList();
+
+        CalculateTotalBoosts(groupedBoosts);
+
+        return groupedBoosts;
+    }
+
+    private static List<BoostGrouping> GroupBoostsByType(IEnumerable<Boost> applicableBoosts)
+    {
+        var groupedBoosts = applicableBoosts
+            .GroupBy(x => new BoostGrouping
+            {
+                BoostType = x.BoostType,
+                ApplicabilityGroup = x.ApplicabilityGroup
+            })
+            .Select(x => new BoostGrouping
+            {
+                BoostType = x.Key.BoostType,
+                ApplicabilityGroup = x.Key.ApplicabilityGroup,
+                Boosts = x.ToList()
+            })
+            .ToList();
+        
+        CalculateTotalBoosts(groupedBoosts);
+
+        return groupedBoosts;
+    }
+
+    private static void CalculateTotalBoosts(List<BoostGrouping> groupedBoosts)
+    {
+        groupedBoosts.ForEach(x => x.TotalMaxBoostAmount = x.Boosts.Sum(b => b.MaxBoostAmount));
+    }
+
+    private void AddFighterSkillBoosts(Fighter fighter, List<Talent> selectedTalents, FightSimulationOptions fightOptions)
+    {
         foreach (var fighterSkill in fighter.FighterSkills.Where(x => x.FighterSkillType == FigherSkillType.Passive))
         {
-            var applicableBoosts = fighterSkill
+            var applicableFighterBoosts = fighterSkill
                 .Boosts.Where(x => IsApplicableBoost(x, fightOptions)).ToList();
-            
-            applicableBoosts.ForEach(x => x.Source = "FighterSkill");
-            
+
+            applicableFighterBoosts.ForEach(x => x.Source = "FighterSkill");
+
             var talent = new Talent
             {
-                Boosts = applicableBoosts
+                Boosts = applicableFighterBoosts
             };
-                
+
             selectedTalents.Add(talent);
         }
-        
+    }
+
+    private static void AddFighterTalentSkillBoosts(Fighter fighter, List<Talent> selectedTalents)
+    {
         foreach (var talentSkill in fighter.TalentSkills)
         {
             var pointsInSelection = selectedTalents
@@ -289,11 +439,14 @@ public class FighterStatsService
                 {
                     Boosts = talentSkill.Boosts
                 };
-                
+
                 selectedTalents.Add(talent);
             }
         }
+    }
 
+    private static void AddOtherBoosts(List<Talent> selectedTalents)
+    {
         // TODO: Improve this so it only chooses the best display buffs based on the army rather than all display values
         var relicsRepository = new RelicBoostsRepository();
         var researchBoostsRepository = new ResearchBoostsRepository();
@@ -301,101 +454,89 @@ public class FighterStatsService
         var otherBoosts = new List<Boost>();
         otherBoosts.AddRange(relicsRepository.GetBoosts());
         otherBoosts.AddRange(researchBoostsRepository.GetBoosts());
-        
+
         selectedTalents.Add(new Talent
         {
             Boosts = otherBoosts
         });
-
-        // TODO: Implement increased rage talents/boosts
-        var boosts = new ArmyBoosts
-        {
-            UnitBoosts = new List<UnitBoosts>
-            {
-                GetUnitBoosts(selectedTalents, TroopType.Hitter, fightOptions), 
-                GetUnitBoosts(selectedTalents, TroopType.Pilot, fightOptions),
-                GetUnitBoosts(selectedTalents, TroopType.Shooter, fightOptions),
-                GetUnitBoosts(selectedTalents, TroopType.WallBreaker, fightOptions)
-            },
-            DamageDealtByNormalAttacks = GetStatBoosts(selectedTalents, fightOptions, x => x.BoostType == BoostType.IncreasedNormalAttackDamage || x.BoostType == BoostType.IncreasedDamage),
-            DamageDealtBySkillsPercentIncrease = GetStatBoosts(selectedTalents, fightOptions, x => x.BoostType == BoostType.IncreasedSkillDamage || x.BoostType == BoostType.IncreasedDamage),
-            DamageDealtByCounterAttacks = GetStatBoosts(selectedTalents, fightOptions, x => x.BoostType == BoostType.IncreasedCounterAttackDamage || x.BoostType == BoostType.IncreasedDamage),
-            IncreasedMaxTroopsPercent = selectedTalents.SelectMany(x => x.Boosts.Where(x => x.BoostType == BoostType.IncreasedMaxTroops)).Sum(x => x.MaxBoostAmount),
-            ApplicableBoosts = selectedTalents.SelectMany(x => x.Boosts).Where(x => IsApplicableBoost(x, fightOptions)).ToList()
-        };
-
-        return boosts;
     }
 
     private bool IsApplicableBoost(Boost boost, FightSimulationOptions fightOptions)
     {
-        var applicable = boost.BoostRestrictionType switch
-        {
-            BoostRestrictionType.SeigeMode => fightOptions.Seige,
-            BoostRestrictionType.GatheringResources => fightOptions.Gathering,
-            BoostRestrictionType.AttackingCitiesOnly => fightOptions.Seige,
-            BoostRestrictionType.MapBattle => fightOptions.MapBattle,
-            BoostRestrictionType.LeadingRally => false, // TODO: This should be a fight option
-            BoostRestrictionType.HealthBelowHalf => false, // TODO: need to improve this later
-            BoostRestrictionType.TwoSecondsAfterActiveSkillRelease => false,
-            BoostRestrictionType.HealthAbove70 => true, // TODO: Needs improving later
-            BoostRestrictionType.HealthAbove90 => true, // TODO: need to improve this later
-            BoostRestrictionType.HealthAbove80 => true, // TODO: need to improve this later
-            BoostRestrictionType.HealthBelow80 => false, // TODO: need to improve this later
-            BoostRestrictionType.FirstFiveSecondsOfBattle => false,
-            BoostRestrictionType.FirstTenSecondsOfBattle => false,
-            BoostRestrictionType.FiveSecondsAfterActiveSkillRelease => false,
-            BoostRestrictionType.ThreeSecondsAfterHitByActiveSkill => false,
-            BoostRestrictionType.TenSecondsAfterLeavingCity => false,
-            BoostRestrictionType.ThreeSecondsAfterHealing => false,
-            BoostRestrictionType.ThreeSecondsAfterSuccessfulChance => false,
-            BoostRestrictionType.AttackingGatherers => fightOptions.Gathering,
-            BoostRestrictionType.Garrison => fightOptions.Garrison,
-            BoostRestrictionType.DefendingAgainstMultipleTroops => false, // TODO: This needs implementing
-            BoostRestrictionType.AttackingNeutralUnits => fightOptions.AttackingNeutralUnits,
-            BoostRestrictionType.MultipliedByAdjacentAllies => true, // TODO: This needs implementing
-            BoostRestrictionType.TwoSecondsAfterTakingSkillDamage => false, // TODO: This needs implementing
-            BoostRestrictionType.AfterTakingSkillDamage => false, // TODO: This needs implementing
-            BoostRestrictionType.TroopNumberGreaterThanEnemy => true, // TODO: This needs implementing
-            BoostRestrictionType.AfterNormalAttack => false, // TODO: This needs implementing
-            BoostRestrictionType.AfterActiveSkillRelease => false, // TODO: This needs implementing
-            BoostRestrictionType.ThreeSecondsAfterActiveSkillRelease => false, // TODO: This needs implementing
-            null => true,
-            _ => throw new NotImplementedException()
-        };
+        if (boost.ApplicabilityGroup == null)
+            return true;
+        
+        var applicable = fightOptions.ApplicabilityGroups.Contains(boost.ApplicabilityGroup.Value);
 
-        if (boost.DisabledInCannonMode)
+        if (boost.DisabledInCannonMode && fightOptions.UseCannons)
             applicable = false;
         
         return applicable;
     }
 
-
-    public double GetStatBoosts(List<Talent> talents, FightSimulationOptions fightSimulationOptions, Func<Boost, bool> filter)
+    public ApplicabilityGroup GetApplicabilityGroup(Boost boost)
     {
-        return talents
-            .SelectMany(x => x.Boosts)
-            .Where(x => IsApplicableBoost(x, fightSimulationOptions))
-            .Where(filter)
-            .Select(x => x.BoostAmounts.Max())
-            .Sum();
+        var group = boost.BoostRestrictionType switch
+        {
+            BoostRestrictionType.SeigeMode => ApplicabilityGroup.Siege,
+            BoostRestrictionType.GatheringResources => ApplicabilityGroup.Gathering,
+            BoostRestrictionType.AttackingCitiesOnly => ApplicabilityGroup.Siege,
+            BoostRestrictionType.MapBattle => ApplicabilityGroup.MapBattle,
+            BoostRestrictionType.LeadingRally => ApplicabilityGroup.Rally,
+            BoostRestrictionType.HealthBelowHalf => ApplicabilityGroup.None,
+            BoostRestrictionType.TwoSecondsAfterActiveSkillRelease => ApplicabilityGroup.None,
+            BoostRestrictionType.HealthAbove70 => ApplicabilityGroup.None, 
+            BoostRestrictionType.HealthBelow70 => ApplicabilityGroup.None, 
+            BoostRestrictionType.HealthAbove90 => ApplicabilityGroup.None, 
+            BoostRestrictionType.HealthAbove80 => ApplicabilityGroup.None, 
+            BoostRestrictionType.HealthBelow80 => ApplicabilityGroup.None, 
+            BoostRestrictionType.FirstFiveSecondsOfBattle => ApplicabilityGroup.None,
+            BoostRestrictionType.FirstTenSecondsOfBattle => ApplicabilityGroup.None,
+            BoostRestrictionType.FiveSecondsAfterActiveSkillRelease => ApplicabilityGroup.None,
+            BoostRestrictionType.ThreeSecondsAfterHitByActiveSkill => ApplicabilityGroup.None,
+            BoostRestrictionType.TenSecondsAfterLeavingCity => ApplicabilityGroup.None,
+            BoostRestrictionType.ThreeSecondsAfterHealing => ApplicabilityGroup.None,
+            BoostRestrictionType.ThreeSecondsAfterSuccessfulChance => ApplicabilityGroup.None,
+            BoostRestrictionType.AttackingGatherers => ApplicabilityGroup.Gathering,
+            BoostRestrictionType.Garrison => ApplicabilityGroup.Garrison,
+            BoostRestrictionType.DefendingAgainstMultipleTroops => ApplicabilityGroup.None, 
+            BoostRestrictionType.AttackingNeutralUnits => ApplicabilityGroup.AttackingNeutralUnits,
+            BoostRestrictionType.MultipliedByAdjacentAllies => ApplicabilityGroup.None, 
+            BoostRestrictionType.TwoSecondsAfterTakingSkillDamage => ApplicabilityGroup.None, 
+            BoostRestrictionType.AfterTakingSkillDamage => ApplicabilityGroup.None, 
+            BoostRestrictionType.TroopNumberGreaterThanEnemy => ApplicabilityGroup.None, 
+            BoostRestrictionType.AfterNormalAttack => ApplicabilityGroup.None, 
+            BoostRestrictionType.AfterActiveSkillRelease => ApplicabilityGroup.None, 
+            BoostRestrictionType.ThreeSecondsAfterActiveSkillRelease => ApplicabilityGroup.None, 
+            BoostRestrictionType.NotDisguised => ApplicabilityGroup.None, 
+            BoostRestrictionType.AttackedByMultipleEnemies => ApplicabilityGroup.None, 
+            BoostRestrictionType.AgainstRallys => ApplicabilityGroup.Garrison, 
+            null => ApplicabilityGroup.None,
+            _ => throw new NotImplementedException()
+        };
+
+        return group;
     }
 
-    public UnitBoosts GetUnitBoosts(List<Talent> talents, TroopType troopType, FightSimulationOptions fightSimulationOptions)
+    public double GetStatBoosts(IEnumerable<BoostGrouping> boostGroupings, Func<BoostGrouping, bool> filter)
     {
-        var filteredTalents = talents
-            .Where(x => x.Boosts.Any(b => b.TroopRestriction == troopType 
-                                          || (b.TroopRestriction == TroopType.ThreeUnitTypes && !fightSimulationOptions.UseCannons) 
-                                          || b.TroopRestriction == null))
-            .ToList();
+        return boostGroupings
+            .FirstOrDefault(filter)
+            ?.TotalMaxBoostAmount ?? 0;
+    }
+
+    public UnitBoosts GetUnitBoosts(List<BoostGrouping> boostGroupings, TroopType troopType)
+    {
+        var unitBoosts = boostGroupings
+            .Where(x => x.TroopRestriction == troopType || x.TroopRestriction == null);
         
         return new UnitBoosts
         {
-            AttackBoostPercent = GetStatBoosts(filteredTalents, fightSimulationOptions, x => x.BoostType == BoostType.IncreasedAttack),
-            DefenceBoostPercent = GetStatBoosts(filteredTalents, fightSimulationOptions, x => x.BoostType == BoostType.IncreasedDefence),
-            HealthBoostPercent = GetStatBoosts(filteredTalents, fightSimulationOptions, x => x.BoostType == BoostType.IncreasedHealth),
-            Damage = GetStatBoosts(filteredTalents, fightSimulationOptions, x => x.BoostType == BoostType.IncreasedDamage),
-            Counter = GetStatBoosts(filteredTalents, fightSimulationOptions, x => x.BoostType == BoostType.IncreasedDamageToCounteredUnit),
+            AttackBoostPercent = GetStatBoosts(unitBoosts, x => x.BoostType == BoostType.IncreasedAttack),
+            DefenceBoostPercent = GetStatBoosts(unitBoosts, x => x.BoostType == BoostType.IncreasedDefence),
+            HealthBoostPercent = GetStatBoosts(unitBoosts, x => x.BoostType == BoostType.IncreasedHealth),
+            Damage = GetStatBoosts(unitBoosts, x => x.BoostType == BoostType.IncreasedDamage),
+            Counter = GetStatBoosts(unitBoosts, x => x.BoostType == BoostType.IncreasedDamageToCounteredUnit),
             TroopType = troopType
         };
     }

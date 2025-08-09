@@ -2,10 +2,9 @@
 
 public class MapVersusHitters : FightScenario
 {
-    public MapVersusHitters() : base("MapVersusHittersResults", new FightSimulationOptions()
-    {
-        MapBattle = true
-    }) {}
+    public MapVersusHitters() : base("MapVersusHittersResults", new FightSimulationOptions(
+        ApplicabilityGroup.MapBattle
+        )) {}
     
     public override Func<Army, Army, Army> EnemyArmyFunc(FighterConfiguration configuration)=>
         (Army currentArmy, Army enemyArmy) => new Army

@@ -2,10 +2,9 @@
 
 public class SimpleNeutralUnitsAttack : FightScenario
 {
-    public SimpleNeutralUnitsAttack() : base("NeutralUnitAttackResults", new FightSimulationOptions()
-    {
-        MapBattle = true,
-        AttackingNeutralUnits = true
-    }) {}
+    public SimpleNeutralUnitsAttack() : base("NeutralUnitAttackResults", new FightSimulationOptions(
+        ApplicabilityGroup.MapBattle,
+        ApplicabilityGroup.AttackingNeutralUnits
+    )) {}
     
 }

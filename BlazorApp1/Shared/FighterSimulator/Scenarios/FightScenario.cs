@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Text;
 using BlazorApp1.Shared.FighterSimulator.Extensions;
+using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 
 namespace BlazorApp1.Shared.FighterSimulator.Scenarios;
@@ -13,7 +14,7 @@ public abstract class FightScenario
     private string outputBaseFolder = @"\\nas-pears\documents\AgeOfApes\FighterOutputs";
     public string outputFolder;
     protected double EnemyBoostMultiplier = 1.0;
-    protected string headers = "Fighter\tDeputy\tRoundsTaken\tMaxDamage\tMaxSkillDamage\tEnemyLosses\tYourLosses\tTalentBreakdown\tCannons\tSeige\tGathering\tMap Battle\tUse Shooter Unit Skill\t";
+    protected string headers = "Fighter\tDeputy\tRoundsTaken\tMaxDamage\tMaxSkillDamage\tTotalNormalDamage\tTotalSkillDamage\tEnemyLosses\tYourLosses\tYourRemainingTroops\tEnemyRemainingTroops\tKillRatio\tTalentBreakdown\t";
     protected StringBuilder bestResultsStringBuilder = new StringBuilder();
         
     private string outputPath => $"{outputBaseFolder}//{outputFolder}";
@@ -26,16 +27,39 @@ public abstract class FightScenario
     }
     
     protected new List<UnitBoosts> DefaultEnemyBoosts => GetBoosts(EnemyBoostMultiplier);
-    
+
+    public RunOptions RunOptions { get; set; } = new RunOptions
+    {
+        IncludePilots = true,
+        IncludeHitters = true,
+        IncludeShooters = true,
+        IncludeLeaders = true,
+        IncludeGatherers = true
+    };
+
     protected new List<UnitBoosts> GetBoosts(double multiplier) => new List<UnitBoosts>
     {
         new UnitBoosts 
-            { AttackBoostPercent = 100 * multiplier, DefenceBoostPercent = 80 * multiplier, TroopType = TroopType.Pilot },
+            { AttackBoostPercent = 60 * multiplier, DefenceBoostPercent = 40 * multiplier, TroopType = TroopType.Pilot },
         new UnitBoosts
-            { AttackBoostPercent = 100 * multiplier, DefenceBoostPercent = 80 * multiplier, TroopType = TroopType.Hitter },
+            { AttackBoostPercent = 40 * multiplier, DefenceBoostPercent = 60 * multiplier, TroopType = TroopType.Hitter },
         new UnitBoosts
-            { AttackBoostPercent = 100 * multiplier, DefenceBoostPercent = 80 * multiplier, TroopType = TroopType.Shooter }
+            { AttackBoostPercent = 60 * multiplier, DefenceBoostPercent = 40 * multiplier, TroopType = TroopType.Shooter }
     };
+
+    public DateTime? GetLastRanDate(string? prefix = null)
+    {
+        if (!Directory.Exists(outputPath))
+            return null;
+
+        var directoryInfo = new DirectoryInfo(outputPath);
+        var fileInfo = directoryInfo.GetFiles($"{prefix}*");
+        var earliestFile = fileInfo
+            .Where(x => !x.Attributes.HasFlag(FileAttributes.Hidden))
+            .Min(x => x.CreationTimeUtc);
+
+        return earliestFile;
+    }
 
     public virtual Func<Army, Army, Army> EnemyArmyFunc(FighterConfiguration configuration)=>
         (Army currentArmy, Army enemyArmy) => new Army
@@ -47,9 +71,9 @@ public abstract class FightScenario
             },
             Troops = new List<Troop>
             {
-                new() { TroopType = TroopType.Hitter, Count = 500000, GearLevel = 5, TroopLevel = 5 },
-                new() { TroopType = TroopType.Pilot, Count = 500000, GearLevel = 5, TroopLevel = 5 },
-                new() { TroopType = TroopType.Shooter, Count = 500000, GearLevel = 5, TroopLevel = 5 },
+                new() { TroopType = TroopType.Hitter, Count = 25000, GearLevel = 5, TroopLevel = 5 },
+                new() { TroopType = TroopType.Pilot, Count = 25000, GearLevel = 5, TroopLevel = 5 },
+                new() { TroopType = TroopType.Shooter, Count = 25000, GearLevel = 5, TroopLevel = 5 },
             }
         };
     
@@ -103,6 +127,7 @@ public abstract class FightScenario
             {
                 x.YourArmy.FighterConfiguration.Fighter.Name,
                 DeputyName = x.YourArmy.FighterConfiguration.DeputyFighter?.Name,
+                x.YourArmy.FighterConfiguration.DeputySelectedTalent
             }) // Only take the best of each breakdown, there are usually lots of variants with stats that don't matter
             .Select(x => x.ToList().GetBestResult())
             .ToList();
@@ -126,7 +151,8 @@ public abstract class FightScenario
                 .GroupBy(x => new
                 {
                     x.YourArmy.FighterConfiguration.TalentBreakdown,
-                    DeputyName = x.YourArmy.FighterConfiguration.DeputyFighter?.Name
+                    DeputyName = x.YourArmy.FighterConfiguration.DeputyFighter?.Name,
+                    x.YourArmy.FighterConfiguration.DeputySelectedTalent
                 }) // Only take the best of each breakdown, there are usually lots of variants with stats that don't matter
                 .Select(x => x.ToList().GetBestResult())
                 .ToList();
@@ -141,18 +167,31 @@ public abstract class FightScenario
         
         
         // TODO: Break down by type like research, equipment, talent skill etc.
-        var boostTypes = bestResults
+        var sourceBoostTypes = bestResults
             .SelectMany(x => x.YourArmy.FighterConfiguration.SelectedTalents)
             .SelectMany(x => x.Boosts)
             .OrderBy(x => x.Source)
             .Select(x => $"{x.Source}-{x.BoostType}")
             .Distinct();
+        
+        var boostTypes = bestResults
+            .SelectMany(x => x.YourArmy.FighterConfiguration.SelectedTalents)
+            .SelectMany(x => x.Boosts)
+            .Select(x => $"{x.BoostType}")
+            .Distinct();
+
+        var fileHeaders = headers;
 
         if (includeBreakdown)
         {
             foreach (var boostType in boostTypes)
             {
-                headers += $"{boostType.ToString()}\t";
+                fileHeaders += $"{boostType}\t";
+            }
+            
+            foreach (var boostType in sourceBoostTypes)
+            {
+                fileHeaders += $"{boostType}\t";
             }
         }
 
@@ -160,7 +199,7 @@ public abstract class FightScenario
 
         if (includeHeaders)
         {
-            sb.AppendLine(headers);
+            sb.AppendLine(fileHeaders);
         }
 
         foreach (var result in bestResults)
@@ -170,34 +209,32 @@ public abstract class FightScenario
             sb.Append($"{result.NumberOfRounds}\t");
             sb.Append($"{result.HighestYourDamage}\t");
             sb.Append($"{result.HighestYourSkillDamage}\t");
+            sb.Append($"{result.AttackLogs.Sum(x => x.YourNormalDamage)}\t");
+            sb.Append($"{result.AttackLogs.Sum(x => x.YourSkillDamage)}\t");
             sb.Append($"{result.TotalEnemyLostTroops}\t");
             sb.Append($"{result.TotalYourLostTroops}\t");
+            sb.Append($"{result.YourRemainingTroops}\t");
+            sb.Append($"{result.EnemyRemainingTroops}\t");
+            sb.Append($"{result.KillRatio}\t");
             sb.Append($"{result.YourArmy.FighterConfiguration.TalentBreakdown}\t");
-
-            sb.Append($"{result.FightOptions.UseCannons}\t");
-            sb.Append($"{result.FightOptions.Seige}\t");
-            sb.Append($"{result.FightOptions.Gathering}\t");
-            sb.Append($"{result.FightOptions.MapBattle}\t");
-            sb.Append($"{result.FightOptions.UseShooterUnitSkill}\t");
-
+            
             if (includeBreakdown)
             {
                 var resultBoosts = result
                     .YourArmy
                     .ArmyBoosts
                     .ApplicableBoosts
+                    .GroupBy(x => $"{x.BoostType}");
+                
+                var resultBoostsWithSource = result
+                    .YourArmy
+                    .ArmyBoosts
+                    .ApplicableBoosts
+                    .OrderBy(x => x.Source)
                     .GroupBy(x => $"{x.Source}-{x.BoostType}");
 
-                foreach (var boostType in boostTypes)
-                {
-                    var matchingBoost = resultBoosts.SingleOrDefault(x => x.Key == boostType);
-                    if (matchingBoost != null)
-                    {
-                        sb.Append($"{matchingBoost.ToList().Sum(b => b.BoostAmounts.Max())}");
-                    }
-
-                    sb.Append("\t");
-                }
+                AddBoostDetails(boostTypes, resultBoosts, sb);
+                AddBoostDetails(sourceBoostTypes, resultBoostsWithSource, sb);
             }
 
             sb.Append("\r\n");
@@ -207,4 +244,17 @@ public abstract class FightScenario
         return resultsCsv;
     }
 
+    private static void AddBoostDetails(IEnumerable<string> sourceBoostTypes, IEnumerable<IGrouping<string, Boost>> resultBoostsWithSource, StringBuilder sb)
+    {
+        foreach (var boostType in sourceBoostTypes)
+        {
+            var matchingBoost = resultBoostsWithSource.SingleOrDefault(x => x.Key == boostType);
+            if (matchingBoost != null)
+            {
+                sb.Append($"{matchingBoost.ToList().Sum(b => b.MaxBoostAmount)}");
+            }
+
+            sb.Append("\t");
+        }
+    }
 }

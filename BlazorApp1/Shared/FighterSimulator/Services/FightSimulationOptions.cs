@@ -2,13 +2,14 @@
 
 public class FightSimulationOptions
 {
-    public bool MapBattle { get; set; }
-    public bool Seige { get; set; }
+    public FightSimulationOptions(params ApplicabilityGroup[] applicabilityGroups)
+    {
+        ApplicabilityGroups = applicabilityGroups.ToList();
+    }
+    
+    public List<ApplicabilityGroup> ApplicabilityGroups { get; set; }
     public bool UseCannons { get; set; }
     public bool UseShooterUnitSkill { get; set; }
-    public bool Gathering { get; set; }
-    
-    public bool Garrison { get; set; }
-    public bool AttackingNeutralUnits { get; set; }
     public bool RecalculateArmies { get; set; }
+    public bool RunToAllPlayersDead { get; set; }
 }
