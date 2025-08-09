@@ -49,7 +49,7 @@ public class FighterStatsService
                 DeputySelectedTalent = selectedDeputyTalent,
                 SelectedTalents = combination,
                 // TODO: Improve this so that fight options and deputy fighters can be applied in later steps, then this can be cached
-                ArmyBoosts = BuildArmyBoosts(fighter, combination, fightOptions)
+                ArmyBoosts = BuildArmyBoosts(fighter, deputyFighter, combination, fightOptions)
             };
             
             allConfigurations.Add(config);
@@ -305,7 +305,7 @@ public class FighterStatsService
         return newList;
     }
 
-    public ArmyBoosts BuildArmyBoosts(Fighter fighter, List<Talent> selectedTalents, FightSimulationOptions fightOptions)
+    public ArmyBoosts BuildArmyBoosts(Fighter fighter, Fighter deputyFighter, List<Talent> selectedTalents, FightSimulationOptions fightOptions)
     {
         AddFighterSkillBoosts(fighter, selectedTalents, fightOptions);
         AddFighterTalentSkillBoosts(fighter, selectedTalents);
@@ -319,7 +319,7 @@ public class FighterStatsService
         
         boosts.ForEach(x => x.ApplicabilityGroup = GetApplicabilityGroup(x));
         
-        var applicableBoosts = boosts.Where(x => IsApplicableBoost(x, fightOptions)).ToList();
+        var applicableBoosts = boosts.Where(x => IsApplicableBoost(x, fighter, deputyFighter, fightOptions)).ToList();
         var boostsByType = GroupBoostsByType(applicableBoosts);
         var unitBoosts = GroupBoostsByTroopRestriction(fightOptions, boostsByType);
 
@@ -461,7 +461,7 @@ public class FighterStatsService
         });
     }
 
-    private bool IsApplicableBoost(Boost boost, FightSimulationOptions fightOptions)
+    private bool IsApplicableBoost(Boost boost, Fighter fighter, Fighter deputyFighter, FightSimulationOptions fightOptions)
     {
         if (boost.ApplicabilityGroup == null)
             return true;
@@ -470,6 +470,9 @@ public class FighterStatsService
 
         if (boost.DisabledInCannonMode && fightOptions.UseCannons)
             applicable = false;
+
+        if (boost.BoostRestrictionType == BoostRestrictionType.WithOscar)
+            applicable = fighter.Name == Oscar.GetFighter().Name || deputyFighter.Name == Oscar.GetFighter().Name;
         
         return applicable;
     }
@@ -511,6 +514,7 @@ public class FighterStatsService
             BoostRestrictionType.NotDisguised => ApplicabilityGroup.None, 
             BoostRestrictionType.AttackedByMultipleEnemies => ApplicabilityGroup.None, 
             BoostRestrictionType.AgainstRallys => ApplicabilityGroup.Garrison, 
+            BoostRestrictionType.WithOscar => ApplicabilityGroup.None,
             null => ApplicabilityGroup.None,
             _ => throw new NotImplementedException()
         };

@@ -50,5 +50,6 @@ public enum BoostType
     Intimidate,
     IncreasedActiveSkillDuration,
     ReflectTargetSkillDamage,
-    ReduceEnemyRageOnNormalAttack
+    ReduceEnemyRageOnNormalAttack,
+    ContinuousDamage
 }

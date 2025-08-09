@@ -1,4 +1,5 @@
 ﻿using BlazorApp1.Shared.FighterSimulator.Fighters;
+using BlazorApp1.Shared.FighterSimulator.Fighters.Pilots;
 using BlazorApp1.Shared.FighterSimulator.Fighters.Shooters;
 
 namespace BlazorApp1.Shared.FighterSimulator;
@@ -48,7 +49,7 @@ public class FightersRepository
             fighters.Add(Oscar.GetFighter());
             // TODO: Tny
             // TODO: Maverick
-            // TODO: Darcy
+            fighters.Add(Darcy.GetFighter());
         }
         
         // Hitters

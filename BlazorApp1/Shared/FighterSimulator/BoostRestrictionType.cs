@@ -35,4 +35,5 @@ public enum BoostRestrictionType
     HealthBelow70,
     AttackedByMultipleEnemies,
     AgainstRallys,
+    WithOscar
 }

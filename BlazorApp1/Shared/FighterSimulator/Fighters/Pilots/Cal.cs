@@ -1,6 +1,6 @@
 ﻿using BlazorApp1.Shared.FighterSimulator.TalentTrees;
 
-namespace BlazorApp1.Shared.FighterSimulator.Fighters.Shooters;
+namespace BlazorApp1.Shared.FighterSimulator.Fighters.Pilots;
 
 public class Cal
 {
