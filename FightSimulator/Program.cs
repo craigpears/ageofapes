@@ -1,5 +1,5 @@
-﻿using BlazorApp1.Shared.FighterSimulator;
-using BlazorApp1.Shared.FighterSimulator.Scenarios;
+﻿using FightSimulator.Core.FighterSimulator.Scenarios;
+using FightSimulator.Core.FighterSimulator.Services;
 
 var fightSimulationService = new FightSimulationService();
 var statsService = new FighterStatsService();

@@ -12,6 +12,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FightSimulator", "FightSimulator\FightSimulator.csproj", "{DFF11067-7235-48C6-B324-7691FBDC853B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FightSimulator.Core", "FightSimulator.Core\FightSimulator.Core.csproj", "{D99378C2-A90C-4489-B4B0-75B8FDD912E4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FightSimulator.Tests", "FightSimulator.Tests\FightSimulator.Tests.csproj", "{4132DD27-1133-4C7C-B9D8-2F127200805C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +46,13 @@ Global
 		{DFF11067-7235-48C6-B324-7691FBDC853B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DFF11067-7235-48C6-B324-7691FBDC853B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DFF11067-7235-48C6-B324-7691FBDC853B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D99378C2-A90C-4489-B4B0-75B8FDD912E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D99378C2-A90C-4489-B4B0-75B8FDD912E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D99378C2-A90C-4489-B4B0-75B8FDD912E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D99378C2-A90C-4489-B4B0-75B8FDD912E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4132DD27-1133-4C7C-B9D8-2F127200805C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4132DD27-1133-4C7C-B9D8-2F127200805C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4132DD27-1133-4C7C-B9D8-2F127200805C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4132DD27-1133-4C7C-B9D8-2F127200805C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
