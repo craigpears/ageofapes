@@ -51,5 +51,6 @@ public enum BoostType
     IncreasedActiveSkillDuration,
     ReflectTargetSkillDamage,
     ReduceEnemyRageOnNormalAttack,
-    ContinuousDamage
+    ContinuousDamage,
+    NonCombat
 }

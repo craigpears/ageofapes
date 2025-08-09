@@ -21,7 +21,7 @@ public class ProcessSkillsTests
         var attackingArmy = GetDefaultAttackingArmy();
         var defendingArmy = new Army();
 
-        var skillsResult = sut.ProcessSkills(attackingArmy, defendingArmy, options);
+        var skillsResult = sut.ProcessSkills(attackingArmy, defendingArmy, 1, options);
         
         Assert.That(skillsResult.TotalDamage, Is.EqualTo(0));
         Assert.That(skillsResult.TroopsKilled, Is.EqualTo(0));
@@ -35,7 +35,7 @@ public class ProcessSkillsTests
         var attackingArmy = GetDefaultAttackingArmy();
         var defendingArmy = new Army();
 
-        var skillsResult = sut.ProcessSkills(attackingArmy, defendingArmy, options);
+        var skillsResult = sut.ProcessSkills(attackingArmy, defendingArmy, 1, options);
         
         Assert.That(skillsResult.TotalDamage, Is.EqualTo(0));
         Assert.That(skillsResult.TroopsKilled, Is.EqualTo(0));
@@ -50,7 +50,7 @@ public class ProcessSkillsTests
         attackingArmy.FighterConfiguration.Fighter.ActiveSkill.CannonDamageFactor = 1000;
         var defendingArmy = GetDefaultDefendingArmy();
 
-        var skillsResult = sut.ProcessSkills(attackingArmy, defendingArmy, options);
+        var skillsResult = sut.ProcessSkills(attackingArmy, defendingArmy, 1, options);
         
         // TODO: This is just here for regression testing, need real examples
         Assert.That(skillsResult.TotalDamage, Is.EqualTo(100000));  
@@ -66,7 +66,7 @@ public class ProcessSkillsTests
         var defendingArmy = GetDefaultDefendingArmy();
         defendingArmy.Troops[0].CalculatedDefence *= 2;
 
-        var skillsResult = sut.ProcessSkills(attackingArmy, defendingArmy, options);
+        var skillsResult = sut.ProcessSkills(attackingArmy, defendingArmy, 1, options);
             
         Assert.That(skillsResult.TotalDamage, Is.EqualTo(50000));  
         Assert.That(skillsResult.TroopsKilled, Is.EqualTo(500));
@@ -81,7 +81,7 @@ public class ProcessSkillsTests
         attackingArmy.ArmyBoosts.DamageDealtBySkillsPercentIncrease = 100;
         var defendingArmy = GetDefaultDefendingArmy();
 
-        var skillsResult = sut.ProcessSkills(attackingArmy, defendingArmy, options);
+        var skillsResult = sut.ProcessSkills(attackingArmy, defendingArmy, 1, options);
             
         Assert.That(skillsResult.TotalDamage, Is.EqualTo(200000));  
         Assert.That(skillsResult.TroopsKilled, Is.EqualTo(2000));
@@ -96,7 +96,7 @@ public class ProcessSkillsTests
         attackingArmy.FighterConfiguration.Fighter.ActiveSkill.DamageFactor *= 2;
         var defendingArmy = GetDefaultDefendingArmy();
 
-        var skillsResult = sut.ProcessSkills(attackingArmy, defendingArmy, options);
+        var skillsResult = sut.ProcessSkills(attackingArmy, defendingArmy, 1, options);
             
         Assert.That(skillsResult.TotalDamage, Is.EqualTo(200000));  
         Assert.That(skillsResult.TroopsKilled, Is.EqualTo(2000));
@@ -112,7 +112,7 @@ public class ProcessSkillsTests
         attackingArmy.RageLevel = 0;
         var defendingArmy = GetDefaultDefendingArmy();
 
-        var skillsResult = sut.ProcessSkills(attackingArmy, defendingArmy, options);
+        var skillsResult = sut.ProcessSkills(attackingArmy, defendingArmy, 1, options);
             
         Assert.That(skillsResult.TotalDamage, Is.EqualTo(100000));  
         Assert.That(skillsResult.TroopsKilled, Is.EqualTo(1000));
@@ -143,7 +143,7 @@ public class ProcessSkillsTests
         var skillResults = new List<ProcessSkillsResult>();
         for (int i = 0; i < 10; i++)
         {
-            skillResults.Add(sut.ProcessSkills(attackingArmy, defendingArmy, options));
+            skillResults.Add(sut.ProcessSkills(attackingArmy, defendingArmy, 1, options));
         }
 
         return skillResults.Count(x => x.TotalDamage > 0);

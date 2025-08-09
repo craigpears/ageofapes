@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using FightSimulator.Core.Boosts;
+using FightSimulator.Core.Fighters.Pilots;
 
 namespace FightSimulator.Core.Services;
 
@@ -306,7 +307,7 @@ public class FighterStatsService
 
     public ArmyBoosts BuildArmyBoosts(Fighter fighter, Fighter deputyFighter, List<Talent> selectedTalents, FightSimulationOptions fightOptions)
     {
-        AddFighterSkillBoosts(fighter, selectedTalents, fightOptions);
+        AddFighterSkillBoosts(fighter, deputyFighter, selectedTalents, fightOptions);
         AddFighterTalentSkillBoosts(fighter, selectedTalents);
         AddOtherBoosts(selectedTalents);
 
@@ -405,12 +406,12 @@ public class FighterStatsService
         groupedBoosts.ForEach(x => x.TotalMaxBoostAmount = x.Boosts.Sum(b => b.MaxBoostAmount));
     }
 
-    private void AddFighterSkillBoosts(Fighter fighter, List<Talent> selectedTalents, FightSimulationOptions fightOptions)
+    private void AddFighterSkillBoosts(Fighter fighter, Fighter deputyFighter, List<Talent> selectedTalents, FightSimulationOptions fightOptions)
     {
         foreach (var fighterSkill in fighter.FighterSkills.Where(x => x.FighterSkillType == FigherSkillType.Passive))
         {
             var applicableFighterBoosts = fighterSkill
-                .Boosts.Where(x => IsApplicableBoost(x, fightOptions)).ToList();
+                .Boosts.Where(x => IsApplicableBoost(x, fighter, deputyFighter, fightOptions)).ToList();
 
             applicableFighterBoosts.ForEach(x => x.Source = "FighterSkill");
 
