@@ -20,11 +20,13 @@ public class FightSimulationService
         var repo = new FightersRepository();
         var fighters = repo.GetFighters(scenario.RunOptions);
         var i = 0;
-        
-        foreach (var fighter in fighters.OrderBy(x => scenario.GetLastRanDate(x.Name)))
+        var orderedFighters = fighters.OrderBy(x => scenario.GetLastRanDate(x.Name)).ToList();
+
+        Parallel.ForEach(orderedFighters, new ParallelOptions() { MaxDegreeOfParallelism = 10 }, fighter =>
         {
-            i++;
-            Console.WriteLine($"{scenario.outputFolder} {DateTime.UtcNow.ToShortTimeString()} - Running for {fighter.Name} ({i}/{fighters.Count})");
+            Interlocked.Increment(ref i);
+            Console.WriteLine(
+                $"{scenario.outputFolder} {DateTime.UtcNow.ToShortTimeString()} - Running for {fighter.Name} ({i}/{fighters.Count})");
             var results = new List<AttackResult>();
             var otherFighters = fighters.Where(x => x != fighter).ToList();
             var countToRun = otherFighters.Count * 3;
@@ -36,8 +38,10 @@ public class FightSimulationService
                 {
                     j++;
                     var comboResults = new List<AttackResult>();
-                    Console.WriteLine($"{scenario.outputFolder} {DateTime.UtcNow.ToShortTimeString()} - Running for {fighter.Name} and {deputyFighter?.Name}-{selectedTalent} ({j}/{countToRun})");
-                    var configurations = statsService.GetConfigurationsForFighter(fighter, deputyFighter, selectedTalent, scenario.FightSimulationOptions);
+                    Console.WriteLine(
+                        $"{scenario.outputFolder} {DateTime.UtcNow.ToShortTimeString()} - Running for {fighter.Name} and {deputyFighter?.Name}-{selectedTalent} ({j}/{countToRun})");
+                    var configurations = statsService.GetConfigurationsForFighter(fighter, deputyFighter,
+                        selectedTalent, scenario.FightSimulationOptions);
 
                     foreach (var configuration in configurations)
                     {
@@ -46,16 +50,17 @@ public class FightSimulationService
                         attackResult.FightOptions = scenario.FightSimulationOptions;
                         comboResults.Add(attackResult);
                     }
-                    
+
                     var bestResult = comboResults.GetBestResult();
                     results.Add(bestResult);
                 }
             }
-            
-            Console.WriteLine($"{scenario.outputFolder} {DateTime.UtcNow.ToShortTimeString()} - Saving results for {fighter.Name}");
+
+            Console.WriteLine(
+                $"{scenario.outputFolder} {DateTime.UtcNow.ToShortTimeString()} - Saving results for {fighter.Name}");
             scenario.SaveResults(results);
-            
-        }
+
+        });
 
         scenario.FlushResults();
 

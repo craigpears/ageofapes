@@ -9,7 +9,7 @@ public class FighterStatsService
 {
     protected static Dictionary<string, List<List<Talent>>> _talentTreeCombinationsCache = new Dictionary<string, List<List<Talent>>>();
     protected static Dictionary<string, List<List<Talent>>> _allCombinationsCache = new Dictionary<string, List<List<Talent>>>();
-    protected string _cacheFilesDirectory = @"\\nas-pears\projects\AgeOfApes\FighterOutputs\Cache";
+    protected string _cacheFilesDirectory = @"C:\Users\craig\Downloads\AgeOfApes\FighterOutputs\Cache";
     
     public List<FighterConfiguration> GetConfigurationsForFighter(Fighter fighter, Fighter? deputyFighter, int selectedDeputyTalent, FightSimulationOptions fightOptions)
     {
