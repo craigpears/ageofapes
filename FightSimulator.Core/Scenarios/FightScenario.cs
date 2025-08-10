@@ -10,7 +10,7 @@ public abstract class FightScenario
 {
 
     
-    private string outputBaseFolder = @"\\nas-pears\documents\AgeOfApes\FighterOutputs";
+    private string outputBaseFolder = @"\\nas-pears\Projects\AgeOfApes\FighterOutputs";
     public string outputFolder;
     protected double EnemyBoostMultiplier = 1.0;
     protected string headers = "Fighter\tDeputy\tRoundsTaken\tMaxDamage\tMaxSkillDamage\tTotalNormalDamage\tTotalSkillDamage\tEnemyLosses\tYourLosses\tYourRemainingTroops\tEnemyRemainingTroops\tKillRatio\tTalentBreakdown\t";

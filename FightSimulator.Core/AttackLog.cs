@@ -2,8 +2,8 @@
 
 public class AttackLog
 {
-    public RoundLogData YourRoundLogData { get; set; }
-    public RoundLogData EnemyRoundLogData { get; set; }
+    public RoundLogData YourRoundLogData { get; set; } = new();
+    public RoundLogData EnemyRoundLogData { get; set; } = new();
 
     public double YourNormalDamage => YourRoundLogData.NormalDamage;
     public double YourSkillDamage => YourRoundLogData.SkillDamage;
