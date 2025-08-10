@@ -9,6 +9,7 @@ public class FightSimulationService
     public static int RageOnNormalAttack = 90;
     public static int RageOnCounterAttack = 45;
     public Random rand = new Random();
+    protected object _loggingLock = new object(); 
     
     // TODO: Improve this into a set of parameters to support fighters that do better in 3v3 fights, modified mutants, defending, 1v1 map fights etc.
     public void SimulateFight(
@@ -16,7 +17,6 @@ public class FightSimulationService
             FighterStatsService statsService
         )
     {
-        
         var repo = new FightersRepository();
         var fighters = repo.GetFighters(scenario.RunOptions);
         var i = 0;
@@ -24,9 +24,12 @@ public class FightSimulationService
 
         Parallel.ForEach(orderedFighters, new ParallelOptions() { MaxDegreeOfParallelism = 10 }, fighter =>
         {
-            Interlocked.Increment(ref i);
-            Console.WriteLine(
-                $"{scenario.outputFolder} {DateTime.UtcNow.ToShortTimeString()} - Running for {fighter.Name} ({i}/{fighters.Count})");
+            lock (_loggingLock)
+            {
+                i++;
+                Console.WriteLine($"{scenario.outputFolder} {DateTime.UtcNow.ToShortTimeString()} - Running for {fighter.Name} ({i}/{fighters.Count})");
+            }
+            
             var results = new List<AttackResult>();
             var otherFighters = fighters.Where(x => x != fighter).ToList();
             var countToRun = otherFighters.Count * 3;
