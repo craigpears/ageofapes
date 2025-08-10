@@ -92,26 +92,16 @@ public class FightSimulationService
             // TODO: Implement TwoSecondsAfterTakingSkillDamage, AfterTakingSkillDamage
             // TODO: Implement continuous damage skill
             var log = new AttackLog();
-
-            log.EnemyRoundLogData.AttackDefenceRatio = enemyArmy.Troops.Average(x => x.CalculatedAttack) /
-                                                       yourArmy.Troops.Average(x => x.CalculatedDefence);
-
-            
-            
-            var enemyCounterDamageBoost = enemyArmy.Troops.Average(x => x.CalculatedCounterDamageBoost).ToMultiplier();
-            
             
             log.YourRoundLogData = CalculateRoundLogData(yourArmy, enemyArmy);
             log.EnemyRoundLogData  = CalculateRoundLogData(yourArmy, enemyArmy);
 
 
-            
             // TODO: Not worrying about wounded yet
             log.EnemyRoundLogData.LostTroops = ProcessArmyLosses(enemyArmy, log.YourNormalDamage);
             
             // TODO: Implement different logic for counter attacks
             yourArmy.RageLevel += RageOnNormalAttack;
-            
             
             var yourSkillsResult = ProcessSkills(yourArmy, enemyArmy, log.YourRoundLogData.BaseDamage, options);
             log.YourRoundLogData.SkillDamage = yourSkillsResult.TotalDamage;
@@ -150,9 +140,9 @@ public class FightSimulationService
 
         roundLogData.AttackDefenceRatio = yourArmy.Troops.Average(x => x.CalculatedAttack) /
                                           enemyArmy.Troops.Average(x => x.CalculatedDefence);
-        var yourCounterDamageBoost = yourArmy.Troops.Average(x => x.CalculatedCounterDamageBoost).ToMultiplier();
+        var counterDamageBoost = yourArmy.Troops.Average(x => x.CalculatedCounterDamageBoost).ToMultiplier();
         roundLogData.BaseDamage =
-            roundLogData.AttackDefenceRatio * yourArmy.TotalTroopsCount * yourCounterDamageBoost;
+            roundLogData.AttackDefenceRatio * yourArmy.TotalTroopsCount * counterDamageBoost;
         roundLogData.NormalDamage = roundLogData.BaseDamage *
                                     yourArmy.ArmyBoosts.DamageDealtByNormalAttacks.ToMultiplier();
         roundLogData.TotalHealth = yourArmy.Troops.Average(x => x.CalculatedHealth * x.Count);
