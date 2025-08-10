@@ -1,6 +1,3 @@
-using FightSimulator.Core.FighterSimulator;
-using FightSimulator.Core.FighterSimulator.TalentTrees;
-
 namespace FightSimulator.Core.TalentTrees.Type;
 
 public class Mobility : TalentClass
@@ -27,17 +24,17 @@ public class Mobility : TalentClass
                 .OptionalTalent(BoostType.TakesLessCounterAttackDamage, HalfPercent)
             .NextTalent(BoostType.IncreasedDefence, TwoHalfPercentSteps)
                 .OptionalTalent(BoostType.NonCombat, HalfPercent)
-            .NextTalent(BoostType.NonCombat, ThreeHalfPercentSteps)
-            .NextTalent(BoostType.NonCombat, ThreeHalfPercentSteps);
+            .NextTalent(BoostType.NonCombat, HalfPercentSteps)
+            .NextTalent(BoostType.NonCombat, HalfPercentSteps);
 
         // Right tree
         root.NextTalent(BoostType.IncreasedAttack, HalfPercent)
             .NextTalent(BoostType.NonCombat, HalfPercent)
-            .NextTalent(BoostType.IncreasedDefence, ThreeHalfPercentSteps)
-            .NextTalent(BoostType.NonCombat, ThreeHalfPercentSteps)
+            .NextTalent(BoostType.IncreasedDefence, HalfPercentSteps)
+            .NextTalent(BoostType.NonCombat, HalfPercentSteps)
             .NextTalent(BoostType.NonCombat, TwoHalfPercentSteps)
             .NextTalent(BoostType.IncreasedHealth, TwoHalfPercentSteps)
-            .NextTalent(BoostType.NonCombat, ThreeHalfPercentSteps);
+            .NextTalent(BoostType.NonCombat, HalfPercentSteps);
 
         return root;
     }

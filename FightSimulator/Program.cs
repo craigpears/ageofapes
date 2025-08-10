@@ -7,6 +7,9 @@ var lightRun = false;
 
 var scenarios = new List<FightScenario>
 {
+    new MapVersusPilots(),
+    new MapVersusHitters(),
+    new WhaleSeige(),
     new MapVersusShooters(lightRun),
     new MapWallBreakers(),
     new CannonAttack(),     
@@ -14,10 +17,7 @@ var scenarios = new List<FightScenario>
     new SimpleCityAttack(),
     new SimpleNeutralUnitsAttack(),
     new SimpleMapAttack(),
-    new SimpleDefence(), 
-    new MapVersusPilots(),
-    new MapVersusHitters(),
-    new WhaleSeige()
+    new SimpleDefence()
 }.OrderBy(x => x.GetLastRanDate());
 
 foreach(var scenario in scenarios)

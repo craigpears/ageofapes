@@ -48,7 +48,7 @@ public class FightersRepository
             fighters.Add(Cal.GetFighter());
             // TODO: Tiffany
             fighters.Add(Oscar.GetFighter());
-            // TODO: Tny
+            fighters.Add(TNY.GetFighter());
             // TODO: Maverick
             fighters.Add(Darcy.GetFighter());
         }
