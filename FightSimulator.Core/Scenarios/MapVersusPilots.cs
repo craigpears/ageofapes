@@ -1,12 +1,22 @@
-﻿using FightSimulator.Core.Services;
+﻿using FightSimulator.Core.Fighters;
+using FightSimulator.Core.Services;
 
 namespace FightSimulator.Core.Scenarios;
 
 public class MapVersusPilots : FightScenario
 {
-    public MapVersusPilots() : base("MapVersusPilotsResults", new FightSimulationOptions(
+    public MapVersusPilots(bool lightRun) : base("MapVersusPilotsResults", new FightSimulationOptions(
         ApplicabilityGroup.MapBattle
-    )) {}
+    ))
+    {
+        if (lightRun)
+        {
+            RunOptions = new RunOptions
+            {
+                IncludePilots = true
+            };
+        }
+    }
     
     public override Func<Army, Army, Army> EnemyArmyFunc(FighterConfiguration configuration)=>
         (Army currentArmy, Army enemyArmy) => new Army

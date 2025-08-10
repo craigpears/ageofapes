@@ -3,11 +3,11 @@ using FightSimulator.Core.Services;
 
 var fightSimulationService = new FightSimulationService();
 var statsService = new FighterStatsService();
-var lightRun = false;
+var lightRun = true;
 
 var scenarios = new List<FightScenario>
 {
-    new MapVersusPilots(),
+    new MapVersusPilots(lightRun),
     new MapVersusHitters(),
     new WhaleSeige(),
     new MapVersusShooters(lightRun),

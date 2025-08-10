@@ -15,7 +15,7 @@ public class MapVersusShooters : FightScenario
         {
             RunOptions = new RunOptions
             {
-                IncludePilots = true
+                IncludeShooters = true
             };
         }
     }

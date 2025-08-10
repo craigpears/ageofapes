@@ -10,6 +10,7 @@ public class FighterStatsService
     protected static Dictionary<string, List<List<Talent>>> _talentTreeCombinationsCache = new Dictionary<string, List<List<Talent>>>();
     protected static Dictionary<string, List<List<Talent>>> _allCombinationsCache = new Dictionary<string, List<List<Talent>>>();
     protected string _cacheFilesDirectory = @"C:\Users\craig\Downloads\AgeOfApes\FighterOutputs\Cache";
+    protected object _cacheLock = new object();
     
     public List<FighterConfiguration> GetConfigurationsForFighter(Fighter fighter, Fighter? deputyFighter, int selectedDeputyTalent, FightSimulationOptions fightOptions)
     {
@@ -170,8 +171,13 @@ public class FighterStatsService
             t.LastRequiredTalent = null;
         }));
         
-        var json = JsonSerializer.Serialize(combinations, new JsonSerializerOptions { ReferenceHandler = ReferenceHandler.IgnoreCycles});
-        File.WriteAllText(cacheFileName, json);
+        lock (_cacheLock)
+        {
+            
+            var json = JsonSerializer.Serialize(combinations, new JsonSerializerOptions { ReferenceHandler = ReferenceHandler.IgnoreCycles});
+            File.WriteAllText(cacheFileName, json);
+        }
+        
         return combinations;
     }
     
