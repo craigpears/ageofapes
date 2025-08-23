@@ -14,74 +14,68 @@ public class FightersRepository
         // TODO: Add todos for fighters not yet unlocked
 
         // Leaders
-        if (options.IncludeLeaders)
-        {
-            fighters.Add(Derrick.GetFighter());
-            fighters.Add(Maximus.GetFighter());
-            fighters.Add(Rodruigez.GetFighter());
-            // TODO: Mastodonte
-            // TODO: Ken
-            // TODO: Joey Jester
-            // TODO: Tassia
-            // TODO: Sergeant Buzz
-            // TODO: Baby Cosmo
-            // TODO: Greg
-            // TODO: Fuscata
-            // TODO: Korutopi
-            // TODO: Rams
-        }
+        fighters.Add(Derrick.GetFighter());
+        fighters.Add(Maximus.GetFighter());
+        fighters.Add(Rodruigez.GetFighter());
+        // TODO: Mastodonte
+        // TODO: Ken
+        // TODO: Joey Jester
+        // TODO: Tassia
+        // TODO: Sergeant Buzz
+        // TODO: Baby Cosmo
+        // TODO: Greg
+        // TODO: Fuscata
+        // TODO: Korutopi
+        // TODO: Rams
         
         // Gatherers
-        if (options.IncludeGatherers)
-        {
-            fighters.Add(Laurent.GetFighter());
-            fighters.Add(Remy.GetFighter());
-            fighters.Add(Dempsey.GetFighter());
-            fighters.Add(Vance.GetFighter());
-        }
+        fighters.Add(Laurent.GetFighter());
+        fighters.Add(Remy.GetFighter());
+        fighters.Add(Dempsey.GetFighter());
+        fighters.Add(Vance.GetFighter());
         
         // Pilots
-        if (options.IncludePilots)
-        {
-            fighters.Add(Elmo.GetFighter());
-            fighters.Add(Dave.GetFighter());
-            fighters.Add(Cal.GetFighter());
-            // TODO: Tiffany
-            fighters.Add(Oscar.GetFighter());
-            fighters.Add(TNY.GetFighter());
-            // TODO: Maverick
-            fighters.Add(Darcy.GetFighter());
-        }
+        fighters.Add(Elmo.GetFighter());
+        fighters.Add(Dave.GetFighter());
+        fighters.Add(Cal.GetFighter());
+        // TODO: Tiffany
+        fighters.Add(Oscar.GetFighter());
+        fighters.Add(TNY.GetFighter());
+        // TODO: Maverick
+        fighters.Add(Darcy.GetFighter());
         
         // Hitters
-        if (options.IncludeHitters)
-        {
-            // TODO: Fiona
-            // TODO: Bazell
-            // TODO: Electro Jack
-            // TODO: Hardy
-            // TODO: Aldrich
-            // TODO: Bruce
-            // TODO: Alexis
-            // TODO: Scott
-            // TODO: Rony Jaa
-        }
+        // TODO: Fiona
+        // TODO: Bazell
+        // TODO: Electro Jack
+        // TODO: Hardy
+        // TODO: Aldrich
+        // TODO: Bruce
+        // TODO: Alexis
+        // TODO: Scott
+        // TODO: Rony Jaa
 
         // Shooters
-        if (options.IncludeShooters)
-        {
-            fighters.Add(BonoBoom.GetFighter());
-            fighters.Add(Carina.GetFighter());
-            fighters.Add(ClarkBrothers.GetFighter());
-            fighters.Add(Thor.GetFighter());
-            fighters.Add(Raymond.GetFighter());
-            // TODO: Duke Sean
-            // TODO: Louise Armstrong
-            // TODO: Mike
-            // TODO: Genesis
-            // TODO: Len
-        }
+        fighters.Add(BonoBoom.GetFighter());
+        fighters.Add(Carina.GetFighter());
+        fighters.Add(ClarkBrothers.GetFighter());
+        fighters.Add(Thor.GetFighter());
+        fighters.Add(Raymond.GetFighter());
+        // TODO: Duke Sean
+        // TODO: Louise Armstrong
+        // TODO: Mike
+        // TODO: Genesis
+        // TODO: Len
 
-        return fighters;
+        var includedFighters = fighters.Where(f =>
+            f.TalentSkills.Any(x => x.TalentTree.TalentTreeName == "Leader" && options.IncludeLeaders) ||
+            f.TalentSkills.Any(x => x.TalentTree.TalentTreeName == "Gatherer" && options.IncludeGatherers) ||
+            f.TalentSkills.Any(x => x.TalentTree.TalentTreeName == "Hunter" && options.IncludeHunters) ||
+            f.TalentSkills.Any(x => x.TalentTree.TalentTreeName == "Pilot" && options.IncludePilots) ||
+            f.TalentSkills.Any(x => x.TalentTree.TalentTreeName == "Hitter" && options.IncludeHitters) ||
+            f.TalentSkills.Any(x => x.TalentTree.TalentTreeName == "Shooter" && options.IncludeShooters)
+        ).ToList();
+
+        return includedFighters;
     }
 }

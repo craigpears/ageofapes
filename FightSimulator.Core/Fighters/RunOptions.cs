@@ -7,4 +7,5 @@ public class RunOptions
     public bool IncludeShooters { get; set; }
     public bool IncludeGatherers { get; set; }
     public bool IncludeLeaders { get; set; }
+    public bool IncludeHunters { get; set; }
 }

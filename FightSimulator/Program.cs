@@ -7,6 +7,7 @@ var lightRun = true;
 
 var scenarios = new List<FightScenario>
 {
+    new SimpleNeutralUnitsAttack(lightRun),
     new MapVersusPilots(lightRun),
     new MapVersusHitters(),
     new WhaleSeige(),
@@ -15,7 +16,6 @@ var scenarios = new List<FightScenario>
     new CannonAttack(),     
     new ShooterUnitSkill(),
     new SimpleCityAttack(),
-    new SimpleNeutralUnitsAttack(),
     new SimpleMapAttack(),
     new SimpleDefence()
 }.OrderBy(x => x.GetLastRanDate());

@@ -27,7 +27,7 @@ public class MapVersusPilots : FightScenario
             },
             Troops = new List<Troop>
             {
-                new() { TroopType = TroopType.Pilot, Count = 500000, GearLevel = 5, TroopLevel = 5 },
+                new() { TroopType = TroopType.Pilot, Count = 150000, GearLevel = 5, TroopLevel = 5 },
             }
         };
 }
