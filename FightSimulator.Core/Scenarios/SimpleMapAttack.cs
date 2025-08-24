@@ -1,12 +1,13 @@
-﻿using FightSimulator.Core.Services;
+﻿using FightSimulator.Core.Repositories;
+using FightSimulator.Core.Services;
 
 namespace FightSimulator.Core.Scenarios;
 
 public class SimpleMapAttack : FightScenario
 {
-    public SimpleMapAttack() : base("DirectMapAttackResults", new FightSimulationOptions(
+    public SimpleMapAttack(IFightResultsRepository fightResultsRepository) : base("DirectMapAttackResults", new FightSimulationOptions(
         ApplicabilityGroup.MapBattle,
         ApplicabilityGroup.Gathering
-        )) {}
+        ), fightResultsRepository) {}
     
 }

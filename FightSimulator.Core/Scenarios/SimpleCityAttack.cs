@@ -1,11 +1,12 @@
-﻿using FightSimulator.Core.Services;
+﻿using FightSimulator.Core.Repositories;
+using FightSimulator.Core.Services;
 
 namespace FightSimulator.Core.Scenarios;
 
 public class SimpleCityAttack : FightScenario
 {
-    public SimpleCityAttack() : base("DirectCityAttackResults", new FightSimulationOptions(
+    public SimpleCityAttack(IFightResultsRepository fightResultsRepository) : base("DirectCityAttackResults", new FightSimulationOptions(
         ApplicabilityGroup.Siege
-        )) {}
+        ), fightResultsRepository) {}
     
 }

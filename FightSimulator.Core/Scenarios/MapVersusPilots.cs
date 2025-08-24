@@ -1,13 +1,14 @@
 ﻿using FightSimulator.Core.Fighters;
+using FightSimulator.Core.Repositories;
 using FightSimulator.Core.Services;
 
 namespace FightSimulator.Core.Scenarios;
 
 public class MapVersusPilots : FightScenario
 {
-    public MapVersusPilots(bool lightRun) : base("MapVersusPilotsResults", new FightSimulationOptions(
+    public MapVersusPilots(bool lightRun, IFightResultsRepository fightResultsRepository) : base("MapVersusPilotsResults", new FightSimulationOptions(
         ApplicabilityGroup.MapBattle
-    ))
+    ), fightResultsRepository)
     {
         if (lightRun)
         {

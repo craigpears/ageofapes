@@ -1,23 +1,27 @@
 ﻿using FightSimulator.Core.Scenarios;
 using FightSimulator.Core.Services;
+using FightSimulator.Core.Repositories;
 
 var fightSimulationService = new FightSimulationService();
 var statsService = new FighterStatsService();
+
+var outputBaseFolder = @"C:\Users\craig\Downloads\AgeOfApes\FighterOutputs";
+var fightResultsRepository = new FightResultsRepository(outputBaseFolder);
 var lightRun = true;
 
 var scenarios = new List<FightScenario>
 {
-    new SimpleNeutralUnitsAttack(lightRun),
-    new MapVersusPilots(lightRun),
-    new MapVersusHitters(),
-    new WhaleSeige(),
-    new MapVersusShooters(lightRun),
-    new MapWallBreakers(),
-    new CannonAttack(),     
-    new ShooterUnitSkill(),
-    new SimpleCityAttack(),
-    new SimpleMapAttack(),
-    new SimpleDefence()
+    new SimpleNeutralUnitsAttack(lightRun, fightResultsRepository),
+    new MapVersusPilots(lightRun, fightResultsRepository),
+    new MapVersusHitters(fightResultsRepository),
+    new WhaleSeige(fightResultsRepository),
+    new MapVersusShooters(lightRun, fightResultsRepository),
+    new MapWallBreakers(fightResultsRepository),
+    new CannonAttack(fightResultsRepository),     
+    new ShooterUnitSkill(fightResultsRepository),
+    new SimpleCityAttack(fightResultsRepository),
+    new SimpleMapAttack(fightResultsRepository),
+    new SimpleDefence(fightResultsRepository)
 }.OrderBy(x => x.GetLastRanDate());
 
 foreach(var scenario in scenarios)

@@ -1,12 +1,12 @@
-﻿using FightSimulator.Core.Services;
+﻿using FightSimulator.Core.Repositories;
+using FightSimulator.Core.Services;
 
 namespace FightSimulator.Core.Scenarios;
 
 public class WhaleSeige : FightScenario
 {
-    public WhaleSeige() : base("WhaleCityAttackResults", 
-            new FightSimulationOptions(ApplicabilityGroup.Garrison)
-        ) {}
+    public WhaleSeige(IFightResultsRepository fightResultsRepository) : base("WhaleCityAttackResults", 
+            new FightSimulationOptions(ApplicabilityGroup.Garrison), fightResultsRepository) {}
     
     public override Func<Army, Army, Army> EnemyArmyFunc(FighterConfiguration configuration) =>
             (Army currentArmy, Army enemyArmy) =>

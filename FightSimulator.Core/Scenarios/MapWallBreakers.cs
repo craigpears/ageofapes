@@ -1,11 +1,12 @@
-﻿using FightSimulator.Core.Services;
+﻿using FightSimulator.Core.Repositories;
+using FightSimulator.Core.Services;
 
 namespace FightSimulator.Core.Scenarios;
 
 public class MapWallBreakers : FightScenario
 {
-    public MapWallBreakers() : base("MapWallBreakers", new FightSimulationOptions(
-        ApplicabilityGroup.MapBattle))
+    public MapWallBreakers(IFightResultsRepository fightResultsRepository) : base("MapWallBreakers", new FightSimulationOptions(
+        ApplicabilityGroup.MapBattle), fightResultsRepository)
     {
         
     }

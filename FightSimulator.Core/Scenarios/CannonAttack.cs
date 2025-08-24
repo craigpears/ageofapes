@@ -1,15 +1,16 @@
-﻿using FightSimulator.Core.Services;
+﻿using FightSimulator.Core.Repositories;
+using FightSimulator.Core.Services;
 
 namespace FightSimulator.Core.Scenarios;
 
 public class CannonAttack : FightScenario
 {
-    public CannonAttack() : base("CannonResults", new FightSimulationOptions(
+    public CannonAttack(IFightResultsRepository fightResultsRepository) : base("CannonResults", new FightSimulationOptions(
             ApplicabilityGroup.Siege
         )
     {
         UseCannons = true,
-    })
+    }, fightResultsRepository)
     {
     }
 

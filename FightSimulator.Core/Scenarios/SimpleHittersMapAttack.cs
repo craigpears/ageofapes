@@ -1,12 +1,13 @@
-﻿using FightSimulator.Core.Services;
+﻿using FightSimulator.Core.Repositories;
+using FightSimulator.Core.Services;
 
 namespace FightSimulator.Core.Scenarios;
 
 public class SimpleHittersMapAttack : FightScenario
 {
-    public SimpleHittersMapAttack() : base("HittersMapAttackResults", new FightSimulationOptions(
+    public SimpleHittersMapAttack(IFightResultsRepository fightResultsRepository) : base("HittersMapAttackResults", new FightSimulationOptions(
         ApplicabilityGroup.MapBattle
-    )) {}
+    ), fightResultsRepository) {}
     
     public virtual Func<Army, Army, Army> EnemyArmyFunc(FighterConfiguration configuration) =>
         (Army currentArmy, Army enemyArmy) => new Army

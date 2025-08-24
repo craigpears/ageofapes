@@ -1,15 +1,16 @@
 ﻿using FightSimulator.Core.Fighters;
+using FightSimulator.Core.Repositories;
 using FightSimulator.Core.Services;
 
 namespace FightSimulator.Core.Scenarios;
 
 public class MapVersusShooters : FightScenario
 {
-    public MapVersusShooters(bool lightRun) : base("MapVersusShootersResults", new FightSimulationOptions(
+    public MapVersusShooters(bool lightRun, IFightResultsRepository fightResultsRepository) : base("MapVersusShootersResults", new FightSimulationOptions(
         ApplicabilityGroup.MapBattle
     ){
         RunToAllPlayersDead = true
-    })
+    }, fightResultsRepository)
     {
         if (lightRun)
         {

@@ -1,12 +1,13 @@
-﻿using FightSimulator.Core.Services;
+﻿using FightSimulator.Core.Repositories;
+using FightSimulator.Core.Services;
 
 namespace FightSimulator.Core.Scenarios;
 
 public class MapVersusHitters : FightScenario
 {
-    public MapVersusHitters() : base("MapVersusHittersResults", new FightSimulationOptions(
+        public MapVersusHitters(IFightResultsRepository fightResultsRepository) : base("MapVersusHittersResults", new FightSimulationOptions(
         ApplicabilityGroup.MapBattle
-        )) {}
+    ), fightResultsRepository) {}
     
     public override Func<Army, Army, Army> EnemyArmyFunc(FighterConfiguration configuration)=>
         (Army currentArmy, Army enemyArmy) => new Army
