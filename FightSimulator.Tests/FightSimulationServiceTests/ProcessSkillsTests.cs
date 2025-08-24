@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Xml.Schema;
 using FightSimulator.Core;
+using FightSimulator.Core.Models;
 using FightSimulator.Core.Services;
 using Newtonsoft.Json;
 

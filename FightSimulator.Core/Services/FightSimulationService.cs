@@ -1,5 +1,6 @@
 ﻿using FightSimulator.Core.Extensions;
 using FightSimulator.Core.Fighters;
+using FightSimulator.Core.Models;
 using FightSimulator.Core.Scenarios;
 
 namespace FightSimulator.Core.Services;

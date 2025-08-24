@@ -1,4 +1,5 @@
-﻿using FightSimulator.Core.Repositories;
+﻿using FightSimulator.Core.Models;
+using FightSimulator.Core.Repositories;
 using FightSimulator.Core.Services;
 
 namespace FightSimulator.Core.Scenarios;

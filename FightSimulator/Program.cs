@@ -3,7 +3,10 @@ using FightSimulator.Core.Services;
 using FightSimulator.Core.Repositories;
 
 var fightSimulationService = new FightSimulationService();
-var statsService = new FighterStatsService();
+
+var cacheFilesDirectory = @"C:\Users\craig\Downloads\AgeOfApes\FighterOutputs\Cache";
+var talentCombinationsRepository = new TalentCombinationsRepository(cacheFilesDirectory);
+var statsService = new FighterStatsService(talentCombinationsRepository);
 
 var outputBaseFolder = @"C:\Users\craig\Downloads\AgeOfApes\FighterOutputs";
 var fightResultsRepository = new FightResultsRepository(outputBaseFolder);

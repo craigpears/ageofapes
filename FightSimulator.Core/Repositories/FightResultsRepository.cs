@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using FightSimulator.Core.Extensions;
+using FightSimulator.Core.Models;
 
 namespace FightSimulator.Core.Repositories;
 

@@ -1,4 +1,5 @@
-﻿using FightSimulator.Core.TalentTrees.Applications;
+﻿using FightSimulator.Core.Models;
+using FightSimulator.Core.TalentTrees.Applications;
 using FightSimulator.Core.TalentTrees.Type;
 using FightSimulator.Core.TalentTrees.Unit;
 

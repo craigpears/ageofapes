@@ -2,6 +2,7 @@
 using FightSimulator.Core.Fighters.Leaders;
 using FightSimulator.Core.Fighters.Pilots;
 using FightSimulator.Core.Fighters.Shooters;
+using FightSimulator.Core.Models;
 
 namespace FightSimulator.Core.Fighters;
 

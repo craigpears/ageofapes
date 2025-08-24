@@ -1,5 +1,6 @@
 using System.Text;
 using FightSimulator.Core.Extensions;
+using FightSimulator.Core.Models;
 
 namespace FightSimulator.Core.Repositories;
 

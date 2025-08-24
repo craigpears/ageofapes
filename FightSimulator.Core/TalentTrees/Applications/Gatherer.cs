@@ -1,4 +1,6 @@
-﻿namespace FightSimulator.Core.TalentTrees.Applications;
+﻿using FightSimulator.Core.Models;
+
+namespace FightSimulator.Core.TalentTrees.Applications;
 
 public class Gatherer : TalentClass
 {

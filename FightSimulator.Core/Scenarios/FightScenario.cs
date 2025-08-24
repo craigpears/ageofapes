@@ -1,4 +1,5 @@
 ﻿using FightSimulator.Core.Fighters;
+using FightSimulator.Core.Models;
 using FightSimulator.Core.Services;
 using FightSimulator.Core.Repositories;
 

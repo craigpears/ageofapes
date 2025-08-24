@@ -1,4 +1,6 @@
-﻿namespace FightSimulator.Core.Boosts;
+﻿using FightSimulator.Core.Models;
+
+namespace FightSimulator.Core.Boosts;
 
 public class ResearchBoostsRepository
 {

@@ -1,16 +1,18 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
-using FightSimulator.Core.Boosts;
+﻿using FightSimulator.Core.Boosts;
 using FightSimulator.Core.Fighters.Pilots;
+using FightSimulator.Core.Models;
+using FightSimulator.Core.Repositories;
 
 namespace FightSimulator.Core.Services;
 
 public class FighterStatsService
 {
-    protected static Dictionary<string, List<List<Talent>>> _talentTreeCombinationsCache = new Dictionary<string, List<List<Talent>>>();
-    protected static Dictionary<string, List<List<Talent>>> _allCombinationsCache = new Dictionary<string, List<List<Talent>>>();
-    protected string _cacheFilesDirectory = @"C:\Users\craig\Downloads\AgeOfApes\FighterOutputs\Cache";
-    protected object _cacheLock = new object();
+    private readonly ITalentCombinationsRepository _talentCombinationsRepository;
+
+    public FighterStatsService(ITalentCombinationsRepository talentCombinationsRepository)
+    {
+        _talentCombinationsRepository = talentCombinationsRepository;
+    }
     
     public List<FighterConfiguration> GetConfigurationsForFighter(Fighter fighter, Fighter? deputyFighter, int selectedDeputyTalent, FightSimulationOptions fightOptions)
     {
@@ -96,21 +98,9 @@ public class FighterStatsService
 
     public List<List<Talent>> GetAllPossibleCombinations(Fighter fighter, List<int> desiredTalentTotals)
     {
-        var cacheFileName = $"{_cacheFilesDirectory}/{fighter.Name}Combinations.json";
-
-        if (_allCombinationsCache.ContainsKey(fighter.Name))
+        var cachedCombinations = _talentCombinationsRepository.GetCachedCombinations(fighter.Name);
+        if (cachedCombinations != null)
         {
-            return _allCombinationsCache[fighter.Name];
-        }
-        
-        if (File.Exists(cacheFileName))
-        {
-            var cachedJson = File.ReadAllText(cacheFileName);
-            var cachedCombinations = JsonSerializer.Deserialize<List<List<Talent>>>(cachedJson);
-            
-            if (_allCombinationsCache.Count < 10)
-                _allCombinationsCache[fighter.Name] = cachedCombinations;
-            
             return cachedCombinations;
         }
         
@@ -129,28 +119,16 @@ public class FighterStatsService
 
         var allPermutations = GetAllPermutations(combinations, desiredTalentTotals);
         
-        var json = JsonSerializer.Serialize(allPermutations, new JsonSerializerOptions { ReferenceHandler = ReferenceHandler.IgnoreCycles});
-        File.WriteAllText(cacheFileName, json);
-        
-        if (_allCombinationsCache.Count < 10)
-            _allCombinationsCache[fighter.Name] = allPermutations;
+        _talentCombinationsRepository.SaveCombinations(fighter.Name, allPermutations);
 
         return allPermutations;
     }
 
     public List<List<Talent>> GetTreeCombinationsCached(Talent rootTalent)
     {
-        var cacheFileName = $"{_cacheFilesDirectory}/{rootTalent.TalentTreeName}.json";
-        if (_talentTreeCombinationsCache.ContainsKey(rootTalent.TalentTreeName))
+        var cachedCombinations = _talentCombinationsRepository.GetCachedTreeCombinations(rootTalent.TalentTreeName);
+        if (cachedCombinations != null)
         {
-            return _talentTreeCombinationsCache[rootTalent.TalentTreeName];
-        }
-        
-        if (File.Exists(cacheFileName))
-        {
-            var cachedJson = File.ReadAllText(cacheFileName);
-            var cachedCombinations = JsonSerializer.Deserialize<List<List<Talent>>>(cachedJson);
-            _talentTreeCombinationsCache[rootTalent.TalentTreeName] = cachedCombinations;
             return cachedCombinations;
         }
         
@@ -161,22 +139,7 @@ public class FighterStatsService
                 t.Boosts.ForEach(b => b.Source = rootTalent.TalentTreeName)
             ));
         
-        _talentTreeCombinationsCache[rootTalent.TalentTreeName] = combinations;
-        
-        // Remove these large links before serialising, they aren't needed anymore.  Should probably have two different models for building and returning.
-        combinations.ForEach(x => x.ForEach(t =>
-        {
-            t.RootTalent = null;
-            t.NextTalents = null;
-            t.LastRequiredTalent = null;
-        }));
-        
-        lock (_cacheLock)
-        {
-            
-            var json = JsonSerializer.Serialize(combinations, new JsonSerializerOptions { ReferenceHandler = ReferenceHandler.IgnoreCycles});
-            File.WriteAllText(cacheFileName, json);
-        }
+        _talentCombinationsRepository.SaveTreeCombinations(rootTalent.TalentTreeName, combinations);
         
         return combinations;
     }

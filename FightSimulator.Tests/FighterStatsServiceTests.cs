@@ -1,17 +1,22 @@
 using System.Diagnostics;
 using System.Xml.Schema;
 using FightSimulator.Core;
+using FightSimulator.Core.Models;
 using FightSimulator.Core.Services;
 using FightSimulator.Core.TalentTrees;
+using FightSimulator.Core.Repositories;
 using Newtonsoft.Json;
 
 namespace Tests;
 
 public class FighterStatsServiceTests : TalentClass
 {
+    private ITalentCombinationsRepository _mockRepository;
+
     [SetUp]
     public void Setup()
     {
+        _mockRepository = new MockTalentCombinationsRepository();
     }
 
     [Test]
@@ -21,7 +26,7 @@ public class FighterStatsServiceTests : TalentClass
         talentTree.NextTalent(BoostType.IncreasedMaxTroops, HalfPercentSteps);
         talentTree.NextTalent(BoostType.IncreasedDamage, HalfPercentSteps);
 
-        var sut = new FighterStatsService();
+        var sut = new FighterStatsService(_mockRepository);
         var combinations = sut.GetTreeCombinations(talentTree);
         
         Assert.That(combinations.Count(), Is.EqualTo(4));
@@ -49,7 +54,7 @@ public class FighterStatsServiceTests : TalentClass
         // Right half of tree    
         talentTree.NextTalent(BoostType.IncreasedDamage, HalfPercentSteps);
 
-        var sut = new FighterStatsService();
+        var sut = new FighterStatsService(_mockRepository);
         var combinations = sut.GetTreeCombinations(talentTree);
         
         Assert.AreEqual(6, combinations.Count());
@@ -75,7 +80,7 @@ public class FighterStatsServiceTests : TalentClass
         // Right half of tree    
         talentTree.NextTalent(BoostType.IncreasedDamage, HalfPercentSteps);
 
-        var sut = new FighterStatsService();
+        var sut = new FighterStatsService(_mockRepository);
         var combinations = sut.GetTreeCombinations(talentTree);
         
         Assert.AreEqual(10, combinations.Count());
@@ -106,7 +111,7 @@ public class FighterStatsServiceTests : TalentClass
             .NextTalent(BoostType.IncreasedDamage, HalfPercentSteps)
             .NextTalent(BoostType.IncreasedMarchingSpeed, ThreePercentSteps);
 
-        var sut = new FighterStatsService();
+        var sut = new FighterStatsService(_mockRepository);
         var combinations = sut.GetTreeCombinations(talentTree);
         
         
@@ -119,4 +124,13 @@ public class FighterStatsServiceTests : TalentClass
         Assert.AreEqual(9, combinations.Count());
     }
 
+    private class MockTalentCombinationsRepository : ITalentCombinationsRepository
+    {
+        public List<List<Talent>> GetCachedCombinations(string cacheKey) => null;
+        public void SaveCombinations(string cacheKey, List<List<Talent>> combinations) { }
+        public List<List<Talent>> GetCachedTreeCombinations(string talentTreeName) => null;
+        public void SaveTreeCombinations(string talentTreeName, List<List<Talent>> combinations) { }
+        public bool HasCachedCombinations(string cacheKey) => false;
+        public bool HasCachedTreeCombinations(string talentTreeName) => false;
+    }
 }

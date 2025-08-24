@@ -1,4 +1,4 @@
-﻿namespace FightSimulator.Core;
+﻿namespace FightSimulator.Core.Models;
 
 public enum FigherSkillType
 {

@@ -1,3 +1,5 @@
+using FightSimulator.Core.Models;
+
 namespace FightSimulator.Core.TalentTrees.Type;
 
 public class Hunter : TalentClass

@@ -1,6 +1,6 @@
 ﻿using FightSimulator.Core.Services;
 
-namespace FightSimulator.Core;
+namespace FightSimulator.Core.Models;
 
 public class AttackResult
 {

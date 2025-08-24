@@ -1,4 +1,6 @@
-﻿namespace FightSimulator.Core.Extensions;
+﻿using FightSimulator.Core.Models;
+
+namespace FightSimulator.Core.Extensions;
 
 public static class AttackResultExtensions
 {
