@@ -17,4 +17,5 @@ public interface IFightResultsRepository
     List<FightResultEntity> GetFightResults(string outputPath, string? fighterName = null);
     List<FightResultEntity> GetBestFightResults(string outputPath);
     FightResultEntity? GetBestFightResultForFighter(string outputPath, string fighterName, string? deputyName = null, int? deputyTalent = null);
+    bool CombinationExists(string outputPath, string fighterName, string? deputyName = null, int? deputyTalent = null);
 }

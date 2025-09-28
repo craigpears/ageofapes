@@ -10,6 +10,7 @@ public abstract class FightScenario
     public string outputFolder;
     protected double EnemyBoostMultiplier = 1.0;
     protected readonly IFightResultsRepository _fightResultsRepository;
+    public IFightResultsRepository FightResultsRepository => _fightResultsRepository;
         
     public FightSimulationOptions FightSimulationOptions { get; set; }
 

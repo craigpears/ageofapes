@@ -23,7 +23,7 @@ public class FightSimulationService
         var i = 0;
         var orderedFighters = fighters.OrderBy(x => scenario.GetLastRanDate(x.Name)).ToList();
 
-        Parallel.ForEach(orderedFighters, new ParallelOptions() { MaxDegreeOfParallelism = 10 }, fighter =>
+        Parallel.ForEach(orderedFighters, new ParallelOptions() { MaxDegreeOfParallelism = 5 }, fighter =>
         {
             lock (_loggingLock)
             {
@@ -42,8 +42,26 @@ public class FightSimulationService
                 {
                     j++;
                     var comboResults = new List<AttackResult>();
-                    Console.WriteLine(
-                        $"{scenario.outputFolder} {DateTime.UtcNow.ToShortTimeString()} - Running for {fighter.Name} and {deputyFighter?.Name}-{selectedTalent} ({j}/{countToRun}) in ({i}/{fighters.Count})");
+
+                    var combinationExists = false;
+                    lock (_loggingLock)
+                    {
+                        // TODO: Try and push these checks further up and build up a list of combinations that need checking instead
+                        combinationExists = scenario.FightResultsRepository.CombinationExists(
+                            scenario.outputFolder,
+                            fighter.Name,
+                            deputyFighter?.Name,
+                            selectedTalent);
+                    }
+
+                    if (combinationExists)
+                    {
+                        Console.WriteLine($"{scenario.outputFolder} {DateTime.UtcNow.ToShortTimeString()} - SKIPPING {fighter.Name} and {deputyFighter?.Name}-{selectedTalent} ({j}/{countToRun}) in ({i}/{fighters.Count}) - Already calculated");
+                        continue;
+                    }
+                    
+                    Console.WriteLine($"{scenario.outputFolder} {DateTime.UtcNow.ToShortTimeString()} - Running for {fighter.Name} and {deputyFighter?.Name}-{selectedTalent} ({j}/{countToRun}) in ({i}/{fighters.Count})");
+                    
                     var configurations = statsService.GetConfigurationsForFighter(fighter, deputyFighter,
                         selectedTalent, scenario.FightSimulationOptions);
 
@@ -60,8 +78,7 @@ public class FightSimulationService
                 }
             }
 
-            Console.WriteLine(
-                $"{scenario.outputFolder} {DateTime.UtcNow.ToShortTimeString()} - Saving results for {fighter.Name}");
+            Console.WriteLine($"{scenario.outputFolder} {DateTime.UtcNow.ToShortTimeString()} - Saving results for {fighter.Name}");
             scenario.SaveResults(results);
 
         });

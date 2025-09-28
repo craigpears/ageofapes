@@ -336,6 +336,24 @@ public class DatabaseFightResultsRepository : IFightResultsRepository
         return query.OrderByDescending(x => x.KillRatio).FirstOrDefault();
     }
 
+    public bool CombinationExists(string outputPath, string fighterName, string? deputyName = null, int? deputyTalent = null)
+    {
+        var query = _context.FightResults
+            .Where(x => x.OutputPath == outputPath && x.FighterName == fighterName);
+
+        if (!string.IsNullOrEmpty(deputyName))
+        {
+            query = query.Where(x => x.DeputyName == deputyName);
+        }
+
+        if (deputyTalent.HasValue)
+        {
+            query = query.Where(x => x.DeputySelectedTalent == deputyTalent);
+        }
+
+        return query.Any();
+    }
+
     private static void AddBoostDetails(IEnumerable<string> sourceBoostTypes, IEnumerable<IGrouping<string, Boost>> resultBoostsWithSource, StringBuilder sb)
     {
         foreach (var boostType in sourceBoostTypes)

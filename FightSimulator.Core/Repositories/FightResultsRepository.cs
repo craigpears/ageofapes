@@ -106,6 +106,13 @@ public class FightResultsRepository : IFightResultsRepository
         return null;
     }
 
+    public bool CombinationExists(string outputPath, string fighterName, string? deputyName = null, int? deputyTalent = null)
+    {
+        // For file-based repository, we can't easily check if a combination exists without parsing files
+        // Return false to indicate we should run the simulation
+        return false;
+    }
+
     public string ResultsToCsv(List<AttackResult> bestResults, bool includeBreakdown, bool includeHeaders)
     {
         // TODO: Break down by type like research, equipment, talent skill etc.
