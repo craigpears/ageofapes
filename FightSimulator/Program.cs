@@ -25,8 +25,8 @@ var lightRun = true;
 
 var scenarios = new List<FightScenario>
 {
-    new SimpleDefence(fightResultsRepository),
-    new SimpleCityAttack(fightResultsRepository),
+    new SimpleDefence(lightRun, fightResultsRepository),
+    new SimpleCityAttack(lightRun, fightResultsRepository),
     new SimpleNeutralUnitsAttack(lightRun, fightResultsRepository),
     new MapVersusPilots(lightRun, fightResultsRepository),
     new MapVersusHitters(fightResultsRepository),

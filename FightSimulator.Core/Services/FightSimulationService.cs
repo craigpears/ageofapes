@@ -10,7 +10,7 @@ public class FightSimulationService
     public static int RageOnNormalAttack = 90;
     public static int RageOnCounterAttack = 45;
     public Random rand = new Random();
-    protected object _loggingLock = new object(); 
+    protected object _loggingAndDatabaseLock = new object(); 
     
     // TODO: Improve this into a set of parameters to support fighters that do better in 3v3 fights, modified mutants, defending, 1v1 map fights etc.
     public void SimulateFight(
@@ -25,7 +25,7 @@ public class FightSimulationService
 
         Parallel.ForEach(orderedFighters, new ParallelOptions() { MaxDegreeOfParallelism = 5 }, fighter =>
         {
-            lock (_loggingLock)
+            lock (_loggingAndDatabaseLock)
             {
                 i++;
                 Console.WriteLine($"{scenario.outputFolder} {DateTime.UtcNow.ToShortTimeString()} - Running for {fighter.Name} ({i}/{fighters.Count})");
@@ -44,7 +44,7 @@ public class FightSimulationService
                     var comboResults = new List<AttackResult>();
 
                     var combinationExists = false;
-                    lock (_loggingLock)
+                    lock (_loggingAndDatabaseLock)
                     {
                         // TODO: Try and push these checks further up and build up a list of combinations that need checking instead
                         combinationExists = scenario.FightResultsRepository.CombinationExists(
@@ -78,13 +78,18 @@ public class FightSimulationService
                 }
             }
 
-            Console.WriteLine($"{scenario.outputFolder} {DateTime.UtcNow.ToShortTimeString()} - Saving results for {fighter.Name}");
-            scenario.SaveResults(results);
+            lock (_loggingAndDatabaseLock)
+            {
+                Console.WriteLine($"{scenario.outputFolder} {DateTime.UtcNow.ToShortTimeString()} - Saving results for {fighter.Name}");
+                scenario.SaveResults(results);
+            }
 
         });
 
-        scenario.FlushResults();
-
+        lock (_loggingAndDatabaseLock)
+        {
+            scenario.FlushResults();
+        }
     }
 
     public AttackResult SimulateCityAttack(Func<Army, Army, Army> yourArmyFunc, Func<Army, Army, Army> enemyArmyFunc, FightSimulationOptions options)
@@ -99,7 +104,7 @@ public class FightSimulationService
             YourArmy = yourArmy,
             EnemyArmy = enemyArmy
         };
-        
+
         while (yourArmy.MainPlayerIsAlive && enemyArmy.MainPlayerIsAlive && (enemyArmy.AnyPlayerIsAlive || !options.RunToAllPlayersDead))
         {
             // TODO: Not worrying about counter unit type damage yet
@@ -150,6 +155,8 @@ public class FightSimulationService
             log.EnemyRoundLogData.TroopsRemaining = enemyArmy.TotalTroopsCount;
             
             attackResult.AttackLogs.Add(log);
+            if (attackResult.AttackLogs.Count == 200)
+                Console.WriteLine("WARNING: 200 rounds reached");
             
             yourArmy = RefreshArmy(yourArmyFunc, yourArmy, enemyArmy, options);
             enemyArmy = RefreshArmy(enemyArmyFunc, enemyArmy, yourArmy, options); 

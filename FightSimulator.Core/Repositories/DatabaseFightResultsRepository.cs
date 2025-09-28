@@ -192,7 +192,7 @@ public class DatabaseFightResultsRepository : IFightResultsRepository
                 EnemyRemainingTroops = result.EnemyRemainingTroops,
                 KillRatio = result.KillRatio,
                 OutputPath = outputPath,
-                ConfigurationJson = configurationJson,
+                //ConfigurationJson = configurationJson,
                 CreatedDate = DateTime.UtcNow
             });
         }
