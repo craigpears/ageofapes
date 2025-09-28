@@ -37,9 +37,9 @@ public class FightersRepository
         fighters.Add(Vance.GetFighter());
         
         // Pilots
-        fighters.Add(Elmo.GetFighter());
+        //fighters.Add(Elmo.GetFighter());
         fighters.Add(Dave.GetFighter());
-        fighters.Add(Cal.GetFighter());
+        //fighters.Add(Cal.GetFighter());
         // TODO: Tiffany
         fighters.Add(Oscar.GetFighter());
         fighters.Add(TNY.GetFighter());
@@ -59,10 +59,10 @@ public class FightersRepository
 
         // Shooters
         fighters.Add(BonoBoom.GetFighter());
-        fighters.Add(Carina.GetFighter());
+        //fighters.Add(Carina.GetFighter());
         fighters.Add(ClarkBrothers.GetFighter());
-        fighters.Add(Thor.GetFighter());
-        fighters.Add(Raymond.GetFighter());
+        //fighters.Add(Thor.GetFighter());
+        //fighters.Add(Raymond.GetFighter());
         // TODO: Duke Sean
         // TODO: Louise Armstrong
         // TODO: Mike

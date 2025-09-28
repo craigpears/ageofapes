@@ -23,7 +23,7 @@ public class FightSimulationService
         var i = 0;
         var orderedFighters = fighters.OrderBy(x => scenario.GetLastRanDate(x.Name)).ToList();
 
-        Parallel.ForEach(orderedFighters, new ParallelOptions() { MaxDegreeOfParallelism = 1 }, fighter =>
+        Parallel.ForEach(orderedFighters, new ParallelOptions() { MaxDegreeOfParallelism = 10 }, fighter =>
         {
             lock (_loggingLock)
             {
