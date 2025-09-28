@@ -1,4 +1,5 @@
 ﻿using FightSimulator.Core.Fighters.Gatherers;
+using FightSimulator.Core.Fighters.Hitters;
 using FightSimulator.Core.Fighters.Leaders;
 using FightSimulator.Core.Fighters.Pilots;
 using FightSimulator.Core.Fighters.Shooters;
@@ -47,7 +48,7 @@ public class FightersRepository
         
         // Hitters
         // TODO: Fiona
-        // TODO: Bazell
+        fighters.Add(Bazell.GetFighter());
         // TODO: Electro Jack
         // TODO: Hardy
         // TODO: Aldrich
