@@ -47,7 +47,7 @@ public class FightersRepository
         fighters.Add(Darcy.GetFighter());
         
         // Hitters
-        // TODO: Fiona
+        fighters.Add(Fiona.GetFighter());
         fighters.Add(Bazell.GetFighter());
         // TODO: Electro Jack
         // TODO: Hardy
