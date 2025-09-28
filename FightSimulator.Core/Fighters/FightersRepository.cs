@@ -28,7 +28,7 @@ public class FightersRepository
         // TODO: Greg
         // TODO: Fuscata
         // TODO: Korutopi
-        // TODO: Rams
+        fighters.Add(Rams.GetFighter());
         
         // Gatherers
         fighters.Add(Laurent.GetFighter());
