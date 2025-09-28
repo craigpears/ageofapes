@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using FightSimulator.Core.DatabaseEntities;
 using FightSimulator.Core.Extensions;
 using FightSimulator.Core.Models;
 
@@ -36,6 +37,7 @@ public class FightResultsRepository : IFightResultsRepository
 
         SaveBestConfigs(bestResults, outputPath);
         SaveFighterResults(results, outputPath);
+        SaveStructuredFightResults(results, outputPath);
     }
 
     public void FlushResults(string outputPath)
@@ -75,6 +77,33 @@ public class FightResultsRepository : IFightResultsRepository
             var talentsJson = JsonSerializer.Serialize(fighterSelectedTalents);
             File.WriteAllText($"{_outputBasePath}//{outputPath}//{fighterConfig.Fighter.Name}_{fighterConfig.DeputyFighter?.Name}.bestConfig.txt", talentsJson);
         }
+    }
+
+    public void SaveStructuredFightResults(List<AttackResult> results, string outputPath)
+    {
+        // File-based repository doesn't support structured database storage
+        // This method is kept for interface compatibility but does nothing
+    }
+
+    public List<FightResultEntity> GetFightResults(string outputPath, string? fighterName = null)
+    {
+        // File-based repository doesn't support structured database queries
+        // Return empty list for interface compatibility
+        return new List<FightResultEntity>();
+    }
+
+    public List<FightResultEntity> GetBestFightResults(string outputPath)
+    {
+        // File-based repository doesn't support structured database queries
+        // Return empty list for interface compatibility
+        return new List<FightResultEntity>();
+    }
+
+    public FightResultEntity? GetBestFightResultForFighter(string outputPath, string fighterName, string? deputyName = null, int? deputyTalent = null)
+    {
+        // File-based repository doesn't support structured database queries
+        // Return null for interface compatibility
+        return null;
     }
 
     public string ResultsToCsv(List<AttackResult> bestResults, bool includeBreakdown, bool includeHeaders)

@@ -23,7 +23,7 @@ public class FightSimulationService
         var i = 0;
         var orderedFighters = fighters.OrderBy(x => scenario.GetLastRanDate(x.Name)).ToList();
 
-        Parallel.ForEach(orderedFighters, new ParallelOptions() { MaxDegreeOfParallelism = 10 }, fighter =>
+        Parallel.ForEach(orderedFighters, new ParallelOptions() { MaxDegreeOfParallelism = 1 }, fighter =>
         {
             lock (_loggingLock)
             {
@@ -43,7 +43,7 @@ public class FightSimulationService
                     j++;
                     var comboResults = new List<AttackResult>();
                     Console.WriteLine(
-                        $"{scenario.outputFolder} {DateTime.UtcNow.ToShortTimeString()} - Running for {fighter.Name} and {deputyFighter?.Name}-{selectedTalent} ({j}/{countToRun})");
+                        $"{scenario.outputFolder} {DateTime.UtcNow.ToShortTimeString()} - Running for {fighter.Name} and {deputyFighter?.Name}-{selectedTalent} ({j}/{countToRun}) in ({i}/{fighters.Count})");
                     var configurations = statsService.GetConfigurationsForFighter(fighter, deputyFighter,
                         selectedTalent, scenario.FightSimulationOptions);
 

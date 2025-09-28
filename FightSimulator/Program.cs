@@ -1,6 +1,8 @@
 ﻿using FightSimulator.Core.Scenarios;
 using FightSimulator.Core.Services;
 using FightSimulator.Core.Repositories;
+using FightSimulator.Core.DatabaseEntities;
+using Microsoft.EntityFrameworkCore;
 
 var fightSimulationService = new FightSimulationService();
 
@@ -8,12 +10,23 @@ var cacheFilesDirectory = @"C:\Users\craig\Downloads\AgeOfApes\FighterOutputs\Ca
 var talentCombinationsRepository = new TalentCombinationsRepository(cacheFilesDirectory);
 var statsService = new FighterStatsService(talentCombinationsRepository);
 
-var outputBaseFolder = @"C:\Users\craig\Downloads\AgeOfApes\FighterOutputs";
-var fightResultsRepository = new FightResultsRepository(outputBaseFolder);
+// Configure Entity Framework
+var connectionString = "Server=.;Database=AgeOfApesFightingSim;Trusted_Connection=true;MultipleActiveResultSets=true;TrustServerCertificate=True";
+var optionsBuilder = new DbContextOptionsBuilder<FightResultsDbContext>();
+optionsBuilder.UseSqlServer(connectionString);
+
+// Create database context and repository
+var dbContext = new FightResultsDbContext(optionsBuilder.Options);
+var fightResultsRepository = new DatabaseFightResultsRepository(dbContext);
+
+// Ensure database is created
+dbContext.Database.EnsureCreated();
 var lightRun = true;
 
 var scenarios = new List<FightScenario>
 {
+    new SimpleDefence(fightResultsRepository),
+    new SimpleCityAttack(fightResultsRepository),
     new SimpleNeutralUnitsAttack(lightRun, fightResultsRepository),
     new MapVersusPilots(lightRun, fightResultsRepository),
     new MapVersusHitters(fightResultsRepository),
@@ -22,9 +35,7 @@ var scenarios = new List<FightScenario>
     new MapWallBreakers(fightResultsRepository),
     new CannonAttack(fightResultsRepository),     
     new ShooterUnitSkill(fightResultsRepository),
-    new SimpleCityAttack(fightResultsRepository),
-    new SimpleMapAttack(fightResultsRepository),
-    new SimpleDefence(fightResultsRepository)
+    new SimpleMapAttack(fightResultsRepository)
 }.OrderBy(x => x.GetLastRanDate());
 
 foreach(var scenario in scenarios)
